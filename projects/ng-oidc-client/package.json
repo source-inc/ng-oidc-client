@@ -1,8 +1,10 @@
 {
-  "name": "ng-oidc-client",
+  "name": "@source/ng-oidc-client",
   "version": "0.0.1",
+  "author": "devs@sourceapp.io",
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
-  }
+  },
+  "license": "MIT"
 }

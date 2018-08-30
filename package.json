@@ -6,6 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "build:lib": "ng build --prod ng-oidc-client",
+    "npm:pack": "cd dist/ng-oidc-client && npm pack",
+    "package": "npm run build:lib && npm run npm:pack",
+    "copy:readme": "copyfiles ./README.md ./dist/ng-oidc-client",
+    "copy": "copy:readme",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -21,6 +25,7 @@
     "@angular/platform-browser": "^6.1.0",
     "@angular/platform-browser-dynamic": "^6.1.0",
     "@angular/router": "^6.1.0",
+    "copyfiles": "^2.0.0",
     "core-js": "^2.5.4",
     "rxjs": "^6.0.0",
     "zone.js": "~0.8.26"

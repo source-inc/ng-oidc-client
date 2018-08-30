@@ -16,6 +16,14 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ng-oidc-client": [
+        "dist/ng-oidc-client"
+      ],
+      "ng-oidc-client/*": [
+        "dist/ng-oidc-client/*"
+      ]
+    }
   }
 }

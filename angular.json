@@ -121,6 +121,46 @@
           }
         }
       }
+    },
+    "ng-oidc-client": {
+      "root": "projects/ng-oidc-client",
+      "sourceRoot": "projects/ng-oidc-client/src",
+      "projectType": "library",
+      "prefix": "oidc",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ng-oidc-client/tsconfig.lib.json",
+            "project": "projects/ng-oidc-client/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "project": "projects/ng-oidc-client/ng-package.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ng-oidc-client/src/test.ts",
+            "tsConfig": "projects/ng-oidc-client/tsconfig.spec.json",
+            "karmaConfig": "projects/ng-oidc-client/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ng-oidc-client/tsconfig.lib.json",
+              "projects/ng-oidc-client/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "ng-oidc-client-app"

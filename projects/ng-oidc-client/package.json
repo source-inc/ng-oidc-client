@@ -2,6 +2,12 @@
   "name": "@source/ng-oidc-client",
   "version": "0.0.1",
   "author": "devs@sourceapp.io",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/fileless/ng-oidc-client"
+  },
+  "homepage" :"https://fileless.github.io/ng-oidc-client",
+  "keywords" :["Angular","Library","oidc","openid","authentication","identity","sso"],
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"

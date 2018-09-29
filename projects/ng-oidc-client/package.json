@@ -1,5 +1,5 @@
 {
-  "name": "@source/ng-oidc-client",
+  "name": "@fileless/ng-oidc-client",
   "version": "0.0.1",
   "author": "devs@sourceapp.io",
   "repository": {

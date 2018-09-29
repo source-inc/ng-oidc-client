@@ -3,6 +3,12 @@
   "dest": "../../dist/ng-oidc-client",
   "deleteDestPath": false,
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "@ngrx/store":"ngrx-store",
+      "@ngrx/effects":"ngrx-effects",
+      "@ngrx/router-store":"ngrx-router-store",
+      "oidc-client":"Oidc"
+    }
   }
 }

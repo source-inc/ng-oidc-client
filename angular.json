@@ -20,7 +20,17 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "src/static",
+                "output": "/"
+              },
+              {
+                "glob": "oidc-client.min.js",
+                "input": "src/../node_modules/oidc-client/dist",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.css"

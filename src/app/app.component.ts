@@ -14,6 +14,10 @@ export class AppComponent {
   }
 
   login() {
-    this.oidcFacade.signin();
+    this.oidcFacade.signinPopup();
+  }
+
+  logout() {
+    this.oidcFacade.signoutPopup();
   }
 }

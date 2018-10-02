@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule, Routes } from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { routerReducer, RouterReducerState } from '@ngrx/router-store';
+import { ActionReducerMap, StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgOidcClientModule } from 'ng-oidc-client';
 import { AppComponent } from './app.component';
-import { StoreModule, ActionReducerMap } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { environment } from '../environments/environment';
-import { routerReducer, RouterReducerState } from '@ngrx/router-store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { Routes, RouterModule } from '@angular/router';
 
 export interface State {
   router: RouterReducerState;

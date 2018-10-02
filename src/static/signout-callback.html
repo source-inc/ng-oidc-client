@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8" />
-    <title>Signout Callback</title>
-    <link rel="icon" type="image/x-icon" href="favicon.png">
-    <script src="oidc-client.min.js"
-            type="application/javascript"></script>
+  <meta charset="utf-8" />
+  <title>Signout Callback</title>
+  <link rel="icon"
+        type="image/x-icon"
+        href="favicon.png">
+  <script src="oidc-client.min.js"
+          type="application/javascript"></script>
 </head>
+
 <body>
-    <script>
-      var config = {
-          userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
-      }
-      var message = {};
-      new Oidc.UserManager(config).signoutRedirectCallback().then(function () {
-          message.signed_out = true;
-          window.location.href = '/';
-      }).catch(function (e) {
-          console.error(e);
-          message.signed_out = false;
-      });
-    </script>
+  <script>
+    var config = {
+      userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
+    }
+    var message = {};
+    // new Oidc.UserManager(config).signoutRedirectCallback().then(test => {
+    //   window.location.href = '/';
+    // });
+
+    Oidc.Log.logger = console;
+    Oidc.Log.level = Oidc.Log.DEBUG;
+    // true param will keep popup window open
+    new Oidc.UserManager().signoutPopupCallback(false).then(() => {
+      // window.close();
+    });
+
+  </script>
 </body>
+
 </html>

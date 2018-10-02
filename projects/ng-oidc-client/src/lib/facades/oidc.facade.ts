@@ -19,6 +19,31 @@ export class OidcFacade {
   loading$ = this.store.select(fromOidc.getOidcLoading);
   identity$ = this.store.select(fromOidc.getOidcIdentity);
 
+  private addUserUnLoaded = function() {
+    this.onUserUnloaded();
+  }.bind(this);
+
+  private accessTokenExpired = function(e) {
+    console.log('addAccessTokenExpired', e);
+  }.bind(this);
+
+  private accessTokenExpiring = function(e) {
+    console.log('addAccessTokenExpiring', e);
+  }.bind(this);
+
+  private addSilentRenewError = function(e) {
+    console.log('addAccessTokenExpired', e);
+  }.bind(this);
+
+  private addUserLoaded = function(loadedUser: OidcUser) {
+    this.onUserLoaded(loadedUser);
+  }.bind(this);
+
+  private addUserSignedOut = function() {
+    this.onUserSignedOut();
+    this.oidcService.removeUser();
+  }.bind(this);
+
   waitForAuthenticationLoaded(): Observable<boolean> {
     return this.loading$.pipe(
       filter(loading => loading === false),
@@ -28,10 +53,6 @@ export class OidcFacade {
 
   getOidcUser() {
     this.store.dispatch(new oidcActions.GetOidcUser());
-  }
-
-  signInSilent() {
-    this.store.dispatch(new oidcActions.SignInSilent());
   }
 
   onUserLoaded(user) {
@@ -50,8 +71,24 @@ export class OidcFacade {
     this.store.dispatch(new oidcActions.SilentRenewError(e));
   }
 
-  signin() {
-    this.oidcService.signin();
+  signinPopup(extraQueryParams?: any) {
+    this.oidcService.signinPopup(extraQueryParams);
+  }
+
+  signinRedirect(extraQueryParams?: any) {
+    this.oidcService.signinRedirect(extraQueryParams);
+  }
+
+  signInSilent() {
+    this.store.dispatch(new oidcActions.SignInSilent());
+  }
+
+  signoutPopup(args?: any) {
+    this.oidcService.signoutPopup(args);
+  }
+
+  signoutRedirect(args?: any) {
+    this.oidcService.signoutRedirect(args);
   }
 
   registerEvent(event: OidcEvent, callback: (...ev: any[]) => void) {
@@ -59,36 +96,13 @@ export class OidcFacade {
   }
 
   private registerDefaultEvents() {
+    // add simple loggers
     this.oidcService.registerOidcEvent(OidcEvent.AccessTokenExpired, this.accessTokenExpired);
     this.oidcService.registerOidcEvent(OidcEvent.AccessTokenExpiring, this.accessTokenExpiring);
     this.oidcService.registerOidcEvent(OidcEvent.SilentRenewError, this.addSilentRenewError);
+
     this.oidcService.registerOidcEvent(OidcEvent.UserLoaded, this.addUserLoaded);
     this.oidcService.registerOidcEvent(OidcEvent.UserUnloaded, this.addUserUnLoaded);
     this.oidcService.registerOidcEvent(OidcEvent.UserSignedOut, this.addUserSignedOut);
-  }
-
-  private accessTokenExpired(e) {
-    console.log('addAccessTokenExpired', e);
-  }
-
-  private accessTokenExpiring(e) {
-    console.log('addAccessTokenExpiring', e);
-  }
-
-  private addSilentRenewError(e) {
-    console.log('addAccessTokenExpired', e);
-  }
-
-  private addUserLoaded(loadedUser: OidcUser) {
-    this.onUserLoaded(loadedUser);
-  }
-
-  private addUserUnLoaded() {
-    this.onUserUnloaded();
-  }
-
-  private addUserSignedOut() {
-    this.onUserSignedOut();
-    this.oidcService.removeUser();
   }
 }

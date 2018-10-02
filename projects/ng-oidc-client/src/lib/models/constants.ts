@@ -4,5 +4,6 @@ export enum OidcEvent {
   SilentRenewError = 'AddSilentRenewError',
   UserLoaded = 'addUserLoaded',
   UserUnloaded = 'addUserUnloaded',
-  UserSignedOut = 'addUserSignedOut'
+  UserSignedOut = 'addUserSignedOut',
+  UserSessionChanged = 'addUserSessionChanged'
 }

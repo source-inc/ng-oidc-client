@@ -7,7 +7,8 @@ import {
   User as OidcUser,
   UserManager,
   UserManagerSettings,
-  WebStorageStateStore
+  WebStorageStateStore,
+  SignoutRequest
 } from 'oidc-client';
 import { from, Observable } from 'rxjs';
 import { Config, OidcEvent, OIDC_CONFIG } from '../models';
@@ -140,8 +141,12 @@ export class OidcService {
     return from(this.oidcUserManager.signoutRedirectCallback());
   }
 
-  getSigninUrl(): Observable<SigninRequest> {
-    return from(this.oidcUserManager.createSigninRequest());
+  getSigninUrl(args?: any): Observable<SigninRequest> {
+    return from(this.oidcUserManager.createSigninRequest(args));
+  }
+
+  getSignoutUrl(args?: any): Observable<SignoutRequest> {
+    return from(this.oidcUserManager.createSignoutRequest(args));
   }
 
   removeUser(): Promise<void> {
@@ -161,20 +166,20 @@ export class OidcService {
       accessTokenExpiringNotificationTime: this.config.accessTokenExpiringNotificationTime,
       filterProtocolClaims: this.config.filterProtocolClaims,
       loadUserInfo: this.config.loadUserInfo,
-      userStore: new WebStorageStateStore({ store: window.localStorage }),
-      metadata: {
-        authorization_endpoint: 'https://ng-oidc-client.auth0.com/authorize',
-        issuer: 'https://ng-oidc-client.auth0.com/',
-        token_endpoint: 'https://ng-oidc-client.auth0.com/oauth/token',
-        jwks_uri: 'https://ng-oidc-client.auth0.com/.well-known/jwks.json',
-        userinfo_endpoint: 'https://ng-oidc-client.auth0.com/userinfo',
-        mfa_challenge_endpoint: 'https://ng-oidc-client.auth0.com/mfa/challenge',
-        registration_endpoint: 'https://ng-oidc-client.auth0.com/oidc/register',
-        revocation_endpoint: 'https://ng-oidc-client.auth0.com/oauth/revoke',
-        end_session_endpoint:
-          `https://ng-oidc-client.auth0.com/v2/logout?` +
-          `returnTo=http%3A%2F%2Flocalhost%3A4200%2Fsignout-callback.html&client_id=ZKGJvKHLI7KYsjBP9HZFXPF4dX3TA6Eq`
-      }
+      userStore: new WebStorageStateStore({ store: window.localStorage })
+      // metadata: {
+      //   authorization_endpoint: 'https://ng-oidc-client.auth0.com/authorize',
+      //   issuer: 'https://ng-oidc-client.auth0.com/',
+      //   token_endpoint: 'https://ng-oidc-client.auth0.com/oauth/token',
+      //   jwks_uri: 'https://ng-oidc-client.auth0.com/.well-known/jwks.json',
+      //   userinfo_endpoint: 'https://ng-oidc-client.auth0.com/userinfo',
+      //   mfa_challenge_endpoint: 'https://ng-oidc-client.auth0.com/mfa/challenge',
+      //   registration_endpoint: 'https://ng-oidc-client.auth0.com/oidc/register',
+      //   revocation_endpoint: 'https://ng-oidc-client.auth0.com/oauth/revoke',
+      //   end_session_endpoint:
+      //     `https://ng-oidc-client.auth0.com/v2/logout?` +
+      //     `returnTo=http%3A%2F%2Flocalhost%3A4200%2Fsignout-callback.html&client_id=ZKGJvKHLI7KYsjBP9HZFXPF4dX3TA6Eq`
+      // }
     } as UserManagerSettings;
 
     return settings;

@@ -18,6 +18,7 @@ export class AppComponent {
   }
 
   logout() {
-    this.oidcFacade.signoutPopup();
+    // this.oidcFacade.signoutPopup();
+    this.oidcFacade.getSignoutUrl().subscribe(url => console.log(url));
   }
 }

@@ -38,14 +38,24 @@ const routes: Routes = [
     }),
     NgOidcClientModule.forRoot({
       environment: {
+        // urls: {
+        //   authority: 'http://ng-oidc-client.auth0.com',
+        //   redirect_uri: 'http://localhost:4200/callback.html',
+        //   post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
+        //   silent_redirect_uri: 'http://localhost:4200/renew-callback.html'
+        // },
+        // client: {
+        //   id: 'ZKGJvKHLI7KYsjBP9HZFXPF4dX3TA6Eq',
+        //   scope: 'openid profile offline_access'
+        // }
         urls: {
-          authority: 'http://ng-oidc-client.auth0.com',
+          authority: 'https://localhost:5001',
           redirect_uri: 'http://localhost:4200/callback.html',
           post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
           silent_redirect_uri: 'http://localhost:4200/renew-callback.html'
         },
         client: {
-          id: 'ZKGJvKHLI7KYsjBP9HZFXPF4dX3TA6Eq',
+          id: 'ng-oidc-client-identity',
           scope: 'openid profile offline_access'
         }
       },

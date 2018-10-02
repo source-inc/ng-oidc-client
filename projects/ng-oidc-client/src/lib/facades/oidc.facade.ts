@@ -95,6 +95,10 @@ export class OidcFacade {
     this.oidcService.registerOidcEvent(event, callback);
   }
 
+  getSignoutUrl(args?: any) {
+    return this.oidcService.getSignoutUrl(args);
+  }
+
   private registerDefaultEvents() {
     // add simple loggers
     this.oidcService.registerOidcEvent(OidcEvent.AccessTokenExpired, this.accessTokenExpired);

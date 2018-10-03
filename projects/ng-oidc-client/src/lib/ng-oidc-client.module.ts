@@ -7,6 +7,7 @@ import { OidcFacade } from './facades/oidc.facade';
 import { Config, OIDC_CONFIG } from './models';
 import { oidcReducer } from './reducers';
 import { OidcService } from './services';
+
 @NgModule({
   imports: [CommonModule, StoreModule.forFeature('oidc', oidcReducer), EffectsModule.forFeature([OidcEffects])],
   declarations: [],

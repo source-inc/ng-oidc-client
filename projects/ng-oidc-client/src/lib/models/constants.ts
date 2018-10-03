@@ -7,3 +7,7 @@ export enum OidcEvent {
   UserSignedOut = 'addUserSignedOut',
   UserSessionChanged = 'addUserSessionChanged'
 }
+
+export enum StorageKeys {
+  PopupCallback = 'ngoidc:isPopupCallback'
+}

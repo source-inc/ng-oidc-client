@@ -1,6 +1,5 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import * as Oidc from 'oidc-client';
 import {
   OidcClient,
   SigninRequest,
@@ -8,10 +7,12 @@ import {
   UserManager,
   UserManagerSettings,
   WebStorageStateStore,
-  SignoutRequest
+  SignoutRequest,
+  Log
 } from 'oidc-client';
 import { from, Observable } from 'rxjs';
-import { Config, OidcEvent, OIDC_CONFIG } from '../models';
+import { Config, OidcEvent, OIDC_CONFIG, StorageKeys } from '../models';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -21,12 +22,13 @@ export class OidcService {
   private oidcClient: OidcClient;
   private oidcUser: OidcUser;
 
-  private useSigninPopup = true;
-  private useSignoutPopup = false;
-
-  constructor(private route: ActivatedRoute, @Inject(OIDC_CONFIG) private config: Config) {
-    Oidc.Log.level = Oidc.Log.NONE;
-    Oidc.Log.logger = console;
+  constructor(
+    private route: ActivatedRoute,
+    @Inject(OIDC_CONFIG) private config: Config,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    Log.level = Log.NONE;
+    Log.logger = console;
 
     const clientSettings = this.getClientSettings();
     this.oidcUserManager = new UserManager(clientSettings);
@@ -94,6 +96,7 @@ export class OidcService {
   }
 
   signinPopup(extraQueryParams?: any): Observable<OidcUser> {
+    this.setCallbackInformation(true);
     if (extraQueryParams) {
       const params = {
         extraQueryParams: extraQueryParams
@@ -104,6 +107,8 @@ export class OidcService {
   }
 
   signinRedirect(extraQueryParams?: any): Observable<OidcUser> {
+    this.setCallbackInformation(false);
+
     if (extraQueryParams) {
       const params = {
         extraQueryParams: extraQueryParams
@@ -114,10 +119,12 @@ export class OidcService {
   }
 
   signoutRedirect(args?: any): Observable<any> {
+    this.setCallbackInformation(false);
     return from(this.oidcUserManager.signoutRedirect(args));
   }
 
   signoutPopup(args?: any): Observable<any> {
+    this.setCallbackInformation(true);
     return from(this.oidcUserManager.signoutPopup());
   }
 
@@ -153,8 +160,6 @@ export class OidcService {
     return this.oidcUserManager.removeUser();
   }
 
-
-
   private getClientSettings(): UserManagerSettings {
     const settings = {
       authority: this.config.environment.urls.authority,
@@ -186,5 +191,11 @@ export class OidcService {
     } as UserManagerSettings;
 
     return settings;
+  }
+
+  private setCallbackInformation(isPopupCallback: boolean) {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(StorageKeys.PopupCallback, `${isPopupCallback}`);
+    }
   }
 }

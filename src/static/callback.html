@@ -22,13 +22,15 @@
     if ((Oidc && Oidc.Log && Oidc.Log.logger)) {
       Oidc.Log.logger = console;
     }
+    var isPopupCallback = JSON.parse(window.localStorage.getItem('ngoidc:isPopupCallback'));
 
-    // new UserManager().signinPopupCallback();
-
-    // TODO: check if popup or redirect should happen
-    new Oidc.UserManager(config).signinRedirectCallback().then(t => {
-      window.location.href = '/';
-    });
+    if (isPopupCallback) {
+      new Oidc.UserManager(config).signinPopupCallback();
+    } else {
+      new Oidc.UserManager(config).signinRedirectCallback().then(t => {
+        window.location.href = '/';
+      });
+    }
   </script>
 </body>
 

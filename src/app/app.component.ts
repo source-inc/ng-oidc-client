@@ -10,9 +10,11 @@ import { User } from 'oidc-client';
 export class AppComponent {
   title = 'ng-oidc-client-app';
   user: User;
+  loading$;
 
   constructor(private oidcFacade: OidcFacade) {
     this.oidcFacade.getOidcUser();
+    this.loading$ = this.oidcFacade.loading$;
     this.oidcFacade.identity$.subscribe(user => {
       this.user = user;
     });

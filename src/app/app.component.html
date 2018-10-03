@@ -6,6 +6,7 @@
   <div (click)="logoutRedirect()">Logout Redirect</div>
 </div>
 <div>
-  user:
+  user loading: <span>{{loading$ | async}}</span>
+  <br>
   <span>{{user|json}}</span>
 </div>

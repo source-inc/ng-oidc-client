@@ -70,26 +70,18 @@ export class OidcEffects {
       this.oidcService.getOidcUser().pipe(
         tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
         switchMap((userData: OidcUser) => {
-          const r: Action[] = [new UserFound(userData)];
-
-          if (userData && userData.expired === true) {
-            console.log(
-              '%c Effect getOidcUser  - User HAS expired dispatch sign in silent action',
-              'background: #222; color: #bada55; padding: 10px;'
-            );
-            r.push(new SignInSilent());
-          } else if (userData && !userData.expired) {
-            r.push(new UserDoneLoading(), new OnIdentityChanged(), new OnIdentityEstablished());
-          } else {
-            console.log(
-              `%c Effect getOidcUser  - User ${
-                userData ? `exists and HAS NOT expired yet` : `doesn't exist`
-              } return done loading action`,
-              'background: #222; color: #bada55; padding: 10px;'
-            );
-            r.push(new UserDoneLoading());
+          const r: Action[] = [new UserFound(userData), new UserDoneLoading()];
+          // user does not exist
+          if (userData == null) {
+            return r;
           }
-
+          // user expired, initiate silent sign-in
+          if (userData.expired === true) {
+            r.push(new SignInSilent());
+          } else {
+            // user has been reneewed
+            r.push(new OnIdentityChanged(), new OnIdentityEstablished());
+          }
           return r;
         }),
         catchError(error => {

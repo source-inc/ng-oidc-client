@@ -16,13 +16,15 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Aut
   switch (action.type) {
     case OidcActionTypes.GetOidcUser: {
       return {
-        ...state
+        ...state,
+        loading: true
       };
     }
 
     case OidcActionTypes.OnUserLoaded: {
       return {
-        ...state
+        ...state,
+        loading: false
       };
     }
 

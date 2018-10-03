@@ -25,7 +25,7 @@ export class OidcService {
   private useSignoutPopup = false;
 
   constructor(private route: ActivatedRoute, @Inject(OIDC_CONFIG) private config: Config) {
-    Oidc.Log.level = Oidc.Log.DEBUG;
+    Oidc.Log.level = Oidc.Log.NONE;
     Oidc.Log.logger = console;
 
     const clientSettings = this.getClientSettings();
@@ -118,7 +118,7 @@ export class OidcService {
   }
 
   signoutPopup(args?: any): Observable<any> {
-    return from(this.oidcUserManager.signoutPopup(args));
+    return from(this.oidcUserManager.signoutPopup());
   }
 
   signinSilent(): Observable<OidcUser> {
@@ -153,6 +153,8 @@ export class OidcService {
     return this.oidcUserManager.removeUser();
   }
 
+
+
   private getClientSettings(): UserManagerSettings {
     const settings = {
       authority: this.config.environment.urls.authority,
@@ -166,7 +168,8 @@ export class OidcService {
       accessTokenExpiringNotificationTime: this.config.accessTokenExpiringNotificationTime,
       filterProtocolClaims: this.config.filterProtocolClaims,
       loadUserInfo: this.config.loadUserInfo,
-      userStore: new WebStorageStateStore({ store: window.localStorage })
+      userStore: new WebStorageStateStore({ store: window.localStorage }),
+      includeIdTokenInSilentRenew: true
       // metadata: {
       //   authorization_endpoint: 'https://ng-oidc-client.auth0.com/authorize',
       //   issuer: 'https://ng-oidc-client.auth0.com/',

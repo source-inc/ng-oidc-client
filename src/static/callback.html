@@ -2,29 +2,34 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <title>Callback</title>
-    <link rel="icon"
-          type="image/x-icon"
-          href="favicon.png">
-    <script src="oidc-client.min.js"
-            type="application/javascript"></script>
+  <meta charset="utf-8" />
+  <title>Callback</title>
+  <link rel="icon"
+        type="image/x-icon"
+        href="favicon.png">
+  <script src="oidc-client.min.js"
+          type="application/javascript"></script>
 </head>
 
 <body>
-    <script>
-        var Oidc = window.Oidc;
-        var UserManager = Oidc.UserManager;
+  <script>
+    var Oidc = window.Oidc;
 
-        if ((Oidc && Oidc.Log && Oidc.Log.logger)) {
-            Oidc.Log.logger = console;
-        }
+    var config = {
+      userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
+    }
 
-        new UserManager().signinPopupCallback();
+    if ((Oidc && Oidc.Log && Oidc.Log.logger)) {
+      Oidc.Log.logger = console;
+    }
 
-        // TODO: check if popup or redirect should happen
-        // new UserManager().signinRedirectCallback();
-    </script>
+    // new UserManager().signinPopupCallback();
+
+    // TODO: check if popup or redirect should happen
+    new Oidc.UserManager(config).signinRedirectCallback().then(t => {
+      window.location.href = '/';
+    });
+  </script>
 </body>
 
 </html>

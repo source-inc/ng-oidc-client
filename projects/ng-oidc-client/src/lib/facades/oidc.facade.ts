@@ -20,6 +20,7 @@ export class OidcFacade {
   identity$ = this.store.select(fromOidc.getOidcIdentity);
 
   private addUserUnLoaded = function() {
+    console.log('USER UNLOADED');
     this.onUserUnloaded();
   }.bind(this);
 
@@ -36,10 +37,12 @@ export class OidcFacade {
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
+    console.log('USER LOADED');
     this.onUserLoaded(loadedUser);
   }.bind(this);
 
   private addUserSignedOut = function() {
+    console.log('USER SIGNED OUT');
     this.onUserSignedOut();
     this.oidcService.removeUser();
   }.bind(this);
@@ -60,6 +63,7 @@ export class OidcFacade {
   }
 
   onUserUnloaded() {
+    console.log('dispatching onuserunloaded');
     this.store.dispatch(new oidcActions.OnUserUnloaded());
   }
 

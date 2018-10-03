@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { OidcFacade } from 'ng-oidc-client';
+import { User } from 'oidc-client';
 
 @Component({
   selector: 'app-root',
@@ -8,17 +9,28 @@ import { OidcFacade } from 'ng-oidc-client';
 })
 export class AppComponent {
   title = 'ng-oidc-client-app';
+  user: User;
 
   constructor(private oidcFacade: OidcFacade) {
     this.oidcFacade.getOidcUser();
+    this.oidcFacade.identity$.subscribe(user => {
+      this.user = user;
+    });
   }
 
-  login() {
+  loginPopup() {
     this.oidcFacade.signinPopup();
   }
 
-  logout() {
-    // this.oidcFacade.signoutPopup();
-    this.oidcFacade.getSignoutUrl().subscribe(url => console.log(url));
+  logoutPopup() {
+    this.oidcFacade.signoutPopup();
+  }
+
+  loginRedirect() {
+    this.oidcFacade.signinRedirect();
+  }
+
+  logoutRedirect() {
+    this.oidcFacade.signoutRedirect();
   }
 }

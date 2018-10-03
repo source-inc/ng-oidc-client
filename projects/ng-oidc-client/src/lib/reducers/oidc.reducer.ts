@@ -26,6 +26,13 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Aut
       };
     }
 
+    case OidcActionTypes.OnUserUnloaded: {
+      return {
+        ...state,
+        identity: null
+      };
+    }
+
     case OidcActionTypes.UserFound: {
       return {
         ...state,

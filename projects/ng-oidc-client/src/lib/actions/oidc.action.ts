@@ -2,6 +2,9 @@ import { Action } from '@ngrx/store';
 import { User as OidcUser, User } from 'oidc-client';
 
 export enum OidcActionTypes {
+  GetOidcUser = '[Oidc] get oidc user',
+  RemoveOidcUser = '[Oidc] remove oidc user',
+
   UserExpired = '[Oidc] user expired',
   UserFound = '[Oidc] user found',
   SilentRenewError = '[Oidc] silent renew error',
@@ -13,12 +16,30 @@ export enum OidcActionTypes {
   OnUserLoaded = '[Oidc] on user loaded',
   OnUserUnloaded = '[Oidc] on user unloaded',
   OnUserSignedOut = '[Oidc] on user signed out',
-  GetOidcUser = '[Oidc] get oidc user',
+
   SignInSilent = '[Oidc] sign in silent',
   OnIdentityChanged = '[Oidc] on identity changed',
   OnIdentityEstablished = '[Oidc] on identity establised',
-  OnIdentityRemoved = '[Oidc] on identityremoved'
+  OnIdentityRemoved = '[Oidc] on identityremoved',
+
+  OidcError = '[Oidc] error'
 }
+
+// OIDC COMMANDS
+
+export class GetOidcUser implements Action {
+  readonly type = OidcActionTypes.GetOidcUser;
+}
+
+export class RemoveOidcUser implements Action {
+  readonly type = OidcActionTypes.RemoveOidcUser;
+}
+
+export class SignInSilent implements Action {
+  readonly type = OidcActionTypes.SignInSilent;
+}
+
+//
 
 export class UserExpired implements Action {
   readonly type = OidcActionTypes.UserExpired;
@@ -48,16 +69,6 @@ export class UserDoneLoading implements Action {
 
 export class UserLoadingError implements Action {
   readonly type = OidcActionTypes.UserLoadingError;
-}
-
-// OIDC COMMANDS
-
-export class GetOidcUser implements Action {
-  readonly type = OidcActionTypes.GetOidcUser;
-}
-
-export class SignInSilent implements Action {
-  readonly type = OidcActionTypes.SignInSilent;
 }
 
 // OIDC EVENTS
@@ -94,7 +105,15 @@ export class OnIdentityRemoved implements Action {
   readonly type = OidcActionTypes.OnIdentityRemoved;
 }
 
+export class OidcError implements Action {
+  readonly type = OidcActionTypes.OidcError;
+  constructor(public payload: any) {}
+}
+
 export type OidcActionsUnion =
+  | GetOidcUser
+  | RemoveOidcUser
+  //
   | UserExpired
   | UserFound
   | SilentRenewError
@@ -106,8 +125,9 @@ export type OidcActionsUnion =
   | OnUserLoaded
   | OnUserUnloaded
   | OnUserSignedOut
-  | GetOidcUser
   | SignInSilent
   | OnIdentityEstablished
   | OnIdentityChanged
-  | OnIdentityRemoved;
+  | OnIdentityRemoved
+  //
+  | OidcError;

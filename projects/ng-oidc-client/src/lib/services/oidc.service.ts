@@ -35,6 +35,14 @@ export class OidcService {
     this.oidcClient = new OidcClient(clientSettings);
   }
 
+  getOidcUser(): Observable<OidcUser> {
+    return from(this.oidcUserManager.getUser());
+  }
+
+  removeOidcUser(): Observable<void> {
+    return from(this.oidcUserManager.removeUser());
+  }
+
   registerOidcEvent(event: OidcEvent, callback: (...ev: any[]) => void) {
     switch (event) {
       case OidcEvent.AccessTokenExpired:
@@ -89,10 +97,6 @@ export class OidcService {
       default:
         break;
     }
-  }
-
-  getOidcUser(): Observable<OidcUser> {
-    return from(this.oidcUserManager.getUser());
   }
 
   signinPopup(extraQueryParams?: any): Observable<OidcUser> {
@@ -154,10 +158,6 @@ export class OidcService {
 
   getSignoutUrl(args?: any): Observable<SignoutRequest> {
     return from(this.oidcUserManager.createSignoutRequest(args));
-  }
-
-  removeUser(): Promise<void> {
-    return this.oidcUserManager.removeUser();
   }
 
   private getClientSettings(): UserManagerSettings {

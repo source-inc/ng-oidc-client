@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { User as OidcUser } from 'oidc-client';
 import { of, Observable } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, concatMap } from 'rxjs/operators';
 import {
   OidcActionTypes,
   SignInSilent,
@@ -13,18 +13,57 @@ import {
   OnUserLoaded,
   OnIdentityChanged,
   OnIdentityEstablished,
-  OnIdentityRemoved
+  OnIdentityRemoved,
+  OidcError
 } from '../actions/oidc.action';
 import { OidcService } from '../services/oidc.service';
 import { Action } from '@ngrx/store';
+import { OutputType } from '@angular/core/src/view';
 
 @Injectable()
 export class OidcEffects {
-  constructor(
-    private actions$: Actions,
-    @Inject(OidcService) private oidcService: OidcService,
-    private router: Router
-  ) {}
+  constructor(private actions$: Actions, @Inject(OidcService) private oidcService: OidcService) {}
+
+  @Effect()
+  getOicdUser$ = this.actions$.pipe(
+    ofType(OidcActionTypes.GetOidcUser),
+    tap(() => console.log('Effect getOidcUser  - Getting user from UserManager')),
+    switchMap(() =>
+      this.oidcService.getOidcUser().pipe(
+        tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
+        switchMap((userData: OidcUser) => {
+          const r: Action[] = [new UserFound(userData), new UserDoneLoading()];
+          // user does not exist
+          if (userData == null) {
+            return r;
+          }
+          // user expired, initiate silent sign-in
+          if (userData.expired === true) {
+            r.push(new SignInSilent());
+          } else {
+            // user has been reneewed
+            r.push(new OnIdentityChanged(), new OnIdentityEstablished());
+          }
+          return r;
+        }),
+        catchError(error => {
+          console.log('Effect getOidcUser - Caught error get user', error);
+          return of(new UserDoneLoading());
+        })
+      )
+    )
+  );
+  @Effect()
+  removeOidcUser$ = this.actions$.pipe(
+    ofType(OidcActionTypes.RemoveOidcUser),
+    tap(() => console.log('Effect removeOidcUser')),
+    concatMap(() => {
+      return this.oidcService.removeOidcUser().pipe(
+        concatMap(() => [new UserDoneLoading()]),
+        catchError(error => [new OidcError(error)]) //
+      );
+    })
+  );
 
   @Effect()
   onUserLoaded$: Observable<Action> = this.actions$.pipe(
@@ -60,36 +99,6 @@ export class OidcEffects {
   signInSilentError$ = this.actions$.pipe(
     ofType(OidcActionTypes.SilentRenewError),
     tap(error => console.log('Effect SilentRenewError - There was an error renewing user token', error))
-  );
-
-  @Effect()
-  getOicdUser$ = this.actions$.pipe(
-    ofType(OidcActionTypes.GetOidcUser),
-    tap(() => console.log('Effect getOidcUser  - Getting user from UserManager')),
-    switchMap(() =>
-      this.oidcService.getOidcUser().pipe(
-        tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
-        switchMap((userData: OidcUser) => {
-          const r: Action[] = [new UserFound(userData), new UserDoneLoading()];
-          // user does not exist
-          if (userData == null) {
-            return r;
-          }
-          // user expired, initiate silent sign-in
-          if (userData.expired === true) {
-            r.push(new SignInSilent());
-          } else {
-            // user has been reneewed
-            r.push(new OnIdentityChanged(), new OnIdentityEstablished());
-          }
-          return r;
-        }),
-        catchError(error => {
-          console.log('Effect getOidcUser - Caught error get user', error);
-          return of(new UserDoneLoading());
-        })
-      )
-    )
   );
 
   @Effect()

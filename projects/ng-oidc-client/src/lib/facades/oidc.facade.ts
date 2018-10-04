@@ -19,9 +19,10 @@ export class OidcFacade {
   loading$ = this.store.select(fromOidc.getOidcLoading);
   identity$ = this.store.select(fromOidc.getOidcIdentity);
 
+  // default bindings to events
   private addUserUnLoaded = function() {
     console.log('user loaded');
-    this.onUserUnloaded();
+    this.store.dispatch(new oidcActions.OnUserUnloaded());
   }.bind(this);
 
   private accessTokenExpired = function(e) {
@@ -34,45 +35,39 @@ export class OidcFacade {
 
   private addSilentRenewError = function(e) {
     console.log('addAccessTokenExpired', e);
+    this.store.dispatch(new oidcActions.SilentRenewError(e));
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
     console.log('USER LOADED');
-    this.onUserLoaded(loadedUser);
+    this.store.dispatch(new oidcActions.OnUserLoaded(loadedUser));
   }.bind(this);
 
   private addUserSignedOut = function() {
     console.log('USER SIGNED OUT');
-    this.onUserSignedOut();
-    this.oidcService.removeUser();
+    this.oidcService.removeOidcUser();
+    this.store.dispatch(new oidcActions.OnUserSignedOut());
   }.bind(this);
+
+  private addUserSessionChanged = function() {
+    console.log('USER SESSION CHANGED');
+  };
+
+  // OIDC Methods
+
+  getOidcUser() {
+    this.store.dispatch(new oidcActions.GetOidcUser());
+  }
+
+  removeOidcUser() {
+    this.store.dispatch(new oidcActions.RemoveOidcUser());
+  }
 
   waitForAuthenticationLoaded(): Observable<boolean> {
     return this.loading$.pipe(
       filter(loading => loading === false),
       take(1)
     );
-  }
-
-  getOidcUser() {
-    this.store.dispatch(new oidcActions.GetOidcUser());
-  }
-
-  onUserLoaded(user) {
-    this.store.dispatch(new oidcActions.OnUserLoaded(user));
-  }
-
-  onUserUnloaded() {
-    console.log('dispatching onuserunloaded');
-    this.store.dispatch(new oidcActions.OnUserUnloaded());
-  }
-
-  onUserSignedOut() {
-    this.store.dispatch(new oidcActions.OnUserSignedOut());
-  }
-
-  onSilentRenewError(e) {
-    this.store.dispatch(new oidcActions.SilentRenewError(e));
   }
 
   signinPopup(extraQueryParams?: any) {
@@ -101,12 +96,12 @@ export class OidcFacade {
     this.oidcService.signoutRedirect(args);
   }
 
-  registerEvent(event: OidcEvent, callback: (...ev: any[]) => void) {
-    this.oidcService.registerOidcEvent(event, callback);
-  }
-
   getSignoutUrl(args?: any) {
     return this.oidcService.getSignoutUrl(args);
+  }
+
+  registerEvent(event: OidcEvent, callback: (...ev: any[]) => void) {
+    this.oidcService.registerOidcEvent(event, callback);
   }
 
   private registerDefaultEvents() {
@@ -118,5 +113,6 @@ export class OidcFacade {
     this.oidcService.registerOidcEvent(OidcEvent.UserLoaded, this.addUserLoaded);
     this.oidcService.registerOidcEvent(OidcEvent.UserUnloaded, this.addUserUnLoaded);
     this.oidcService.registerOidcEvent(OidcEvent.UserSignedOut, this.addUserSignedOut);
+    this.oidcService.registerOidcEvent(OidcEvent.UserSessionChanged, this.addUserSessionChanged);
   }
 }

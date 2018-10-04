@@ -14,7 +14,8 @@ export const initialState: AuthState = {
 
 export function oidcReducer(state = initialState, action: OidcActionsUnion): AuthState {
   switch (action.type) {
-    case OidcActionTypes.GetOidcUser: {
+    case OidcActionTypes.GetOidcUser:
+    case OidcActionTypes.RemoveOidcUser: {
       return {
         ...state,
         loading: true

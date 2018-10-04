@@ -1,0 +1,12 @@
+<div class="wrapper">
+  <div (click)="loginPopup()">Login Popup</div>
+  <div (click)="loginRedirect()">Login Redirect</div>
+  <hr>
+  <div (click)="logoutPopup()">Logout Popup</div>
+  <div (click)="logoutRedirect()">Logout Redirect</div>
+</div>
+<div>
+  user loading: <span>{{loading$ | async}}</span>
+  <br>
+  <span>{{user|json}}</span>
+</div>

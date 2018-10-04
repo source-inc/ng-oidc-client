@@ -7,6 +7,11 @@ import { ActionReducerMap, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgOidcClientModule } from 'ng-oidc-client';
 import { AppComponent } from './app.component';
+import { ProtectedComponent } from './protected/protected.component';
+import { HomeComponent } from './home/home.component';
+import { OidcGuardService } from './oidc-guard.service';
+import { OidcInterceptorService } from './oidc-interceptor.service';
+import { LoginComponent } from './login/login.component';
 
 export interface State {
   router: RouterReducerState;
@@ -20,13 +25,22 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    component: AppComponent
+    component: HomeComponent
+  },
+  {
+    path: 'protected',
+    canActivate: [OidcGuardService],
+    component: ProtectedComponent
+  },
+  {
+    path: 'login',
+    component: LoginComponent
   },
   { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ProtectedComponent, HomeComponent, LoginComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
@@ -65,7 +79,7 @@ const routes: Routes = [
       loadUserInfo: true
     })
   ],
-  providers: [],
+  providers: [OidcGuardService, OidcInterceptorService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -1,24 +1,22 @@
 import { Inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Action } from '@ngrx/store';
 import { User as OidcUser } from 'oidc-client';
-import { of, Observable } from 'rxjs';
-import { catchError, map, switchMap, tap, concatMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import {
   OidcActionTypes,
-  SignInSilent,
-  SilentRenewError,
-  UserDoneLoading,
-  UserFound,
-  OnUserLoaded,
+  OidcError,
   OnIdentityChanged,
   OnIdentityEstablished,
   OnIdentityRemoved,
-  OidcError
+  OnUserLoaded,
+  SignInSilent,
+  SilentRenewError,
+  UserDoneLoading,
+  UserFound
 } from '../actions/oidc.action';
 import { OidcService } from '../services/oidc.service';
-import { Action } from '@ngrx/store';
-import { OutputType } from '@angular/core/src/view';
 
 @Injectable()
 export class OidcEffects {

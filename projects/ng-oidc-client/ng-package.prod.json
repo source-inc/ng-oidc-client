@@ -2,7 +2,7 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/ng-oidc-client",
   "lib": {
-    "entryFile": "src/public_api.ts",
+    "entryFile": "src/index.ts",
     "umdModuleIds": {
       "@ngrx/store":"ngrx-store",
       "@ngrx/effects":"ngrx-effects",

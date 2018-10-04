@@ -19,11 +19,8 @@
     ],
     "paths": {
       "ng-oidc-client": [
-        "dist/ng-oidc-client"
-      ],
-      "ng-oidc-client/*": [
-        "dist/ng-oidc-client/*"
-      ]
+        "projects/ng-oidc-client/src"
+      ]      
     }
   }
 }

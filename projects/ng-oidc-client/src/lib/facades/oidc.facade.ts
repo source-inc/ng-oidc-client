@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { User as OidcUser } from 'oidc-client';
-import { Observable } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { filter, take, catchError, tap } from 'rxjs/operators';
 import * as oidcActions from '../actions/oidc.action';
 import { OidcEvent } from '../models';
 import * as fromOidc from '../reducers/oidc.reducer';
@@ -20,7 +20,7 @@ export class OidcFacade {
   identity$ = this.store.select(fromOidc.getOidcIdentity);
 
   private addUserUnLoaded = function() {
-    console.log('USER UNLOADED');
+    console.log('user loaded');
     this.onUserUnloaded();
   }.bind(this);
 
@@ -76,7 +76,13 @@ export class OidcFacade {
   }
 
   signinPopup(extraQueryParams?: any) {
-    this.oidcService.signinPopup(extraQueryParams);
+    this.oidcService
+      .signinPopup(extraQueryParams)
+      .pipe(
+        tap(user => console.log(user)),
+        catchError(error => of(console.log(error)))
+      )
+      .subscribe();
   }
 
   signinRedirect(extraQueryParams?: any) {

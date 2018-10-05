@@ -1,18 +1,28 @@
 import { User as OidcUser } from 'oidc-client';
 import { OidcActionsUnion, OidcActionTypes } from '../actions/oidc.action';
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 
-export interface AuthState {
+export interface OidcState {
   identity: OidcUser | null;
   loading: boolean;
+  expiring: boolean;
+  errors: ErrorState;
 }
 
-export const initialState: AuthState = {
+export interface ErrorState {
+  silentRenewError: any;
+}
+
+export const initialState: OidcState = {
   identity: null,
-  loading: true
+  loading: true,
+  expiring: false,
+  errors: {
+    silentRenewError: null
+  }
 };
 
-export function oidcReducer(state = initialState, action: OidcActionsUnion): AuthState {
+export function oidcReducer(state = initialState, action: OidcActionsUnion): OidcState {
   switch (action.type) {
     case OidcActionTypes.GetOidcUser:
     case OidcActionTypes.RemoveOidcUser: {
@@ -25,14 +35,16 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Aut
     case OidcActionTypes.OnUserLoaded: {
       return {
         ...state,
-        loading: false
+        loading: false,
+        expiring: false
       };
     }
 
     case OidcActionTypes.OnUserUnloaded: {
       return {
         ...state,
-        identity: null
+        identity: null,
+        expiring: false
       };
     }
 
@@ -57,6 +69,35 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Aut
       };
     }
 
+    case OidcActionTypes.UserExpiring: {
+      console.log('reducer expiring');
+      return {
+        ...state,
+        expiring: true
+      };
+    }
+
+    case OidcActionTypes.UserExpired: {
+      return {
+        ...state,
+        expiring: false
+      };
+    }
+
+    case OidcActionTypes.SilentRenewError: {
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          silentRenewError: {
+            message: action.payload.message,
+            name: action.payload.name,
+            stack: action.payload.stack
+          }
+        }
+      };
+    }
+
     default: {
       return state;
     }
@@ -65,7 +106,26 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Aut
 
 // State Selectors
 
-export const selectOidcState = createFeatureSelector<AuthState>('oidc');
+export const selectOidcState = createFeatureSelector<OidcState>('oidc');
 
-export const getOidcLoading = createSelector(selectOidcState, (state: AuthState) => state.loading);
-export const getOidcIdentity = createSelector(selectOidcState, (state: AuthState) => state.identity);
+export const getOidcLoading = createSelector(selectOidcState, (state: OidcState) => state.loading);
+export const getOidcIdentity = createSelector(selectOidcState, (state: OidcState) => state.identity);
+export const isIdentityExpiring = createSelector(selectOidcState, (state: OidcState) => state.expiring);
+
+export const isIdentityExpired = createSelector(getOidcIdentity, (identity: OidcUser) => {
+  if (identity == null) {
+    return false;
+  }
+  return identity.expired;
+});
+
+// errors
+export const selectOidcErrorState: MemoizedSelector<{}, ErrorState> = createSelector(
+  selectOidcState,
+  (state: OidcState) => state.errors
+);
+
+export const getSilentRenewError = createSelector(
+  selectOidcErrorState,
+  (errors: ErrorState) => errors.silentRenewError
+);

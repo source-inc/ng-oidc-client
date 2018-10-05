@@ -8,7 +8,10 @@ export enum OidcActionTypes {
   UserExpired = '[Oidc] user expired',
   UserFound = '[Oidc] user found',
   SilentRenewError = '[Oidc] silent renew error',
+
   SessionTerminated = '[Oidc] session terminated',
+  SessionChanged = '[Oidc] session changed',
+
   UserExpiring = '[Oidc] user expiring',
   UserLoading = '[Oidc] user loading',
   UserDoneLoading = '[Oidc] user done loading',
@@ -51,8 +54,12 @@ export class UserFound implements Action {
   constructor(public payload: OidcUser) {}
 }
 
-export class SesssionTerminated implements Action {
+export class SessionTerminated implements Action {
   readonly type = OidcActionTypes.SessionTerminated;
+}
+
+export class SessionChanged implements Action {
+  readonly type = OidcActionTypes.SessionChanged;
 }
 
 export class UserExpiring implements Action {
@@ -90,7 +97,7 @@ export class OnUserSignedOut implements Action {
 export class SilentRenewError implements Action {
   readonly type = OidcActionTypes.SilentRenewError;
 
-  constructor(public payload: any) {}
+  constructor(public payload: Error) {}
 }
 
 export class OnIdentityEstablished implements Action {
@@ -117,7 +124,10 @@ export type OidcActionsUnion =
   | UserExpired
   | UserFound
   | SilentRenewError
-  | SesssionTerminated
+  //
+  | SessionTerminated
+  | SessionChanged
+  //
   | UserExpiring
   | UserLoading
   | UserDoneLoading

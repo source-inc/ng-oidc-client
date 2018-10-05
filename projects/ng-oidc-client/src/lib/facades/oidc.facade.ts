@@ -12,12 +12,15 @@ import { OidcService } from '../services';
   providedIn: 'root'
 })
 export class OidcFacade {
-  constructor(private store: Store<fromOidc.AuthState>, private oidcService: OidcService) {
+  constructor(private store: Store<fromOidc.OidcState>, private oidcService: OidcService) {
     this.registerDefaultEvents();
   }
 
   loading$ = this.store.select(fromOidc.getOidcLoading);
+  expiring$ = this.store.select(fromOidc.isIdentityExpiring);
+  expired$ = this.store.select(fromOidc.isIdentityExpired);
   identity$ = this.store.select(fromOidc.getOidcIdentity);
+  errors$ = this.store.select(fromOidc.selectOidcErrorState);
 
   // default bindings to events
   private addUserUnLoaded = function() {
@@ -29,12 +32,14 @@ export class OidcFacade {
     console.log('addAccessTokenExpired', e);
   }.bind(this);
 
-  private accessTokenExpiring = function(e) {
-    console.log('addAccessTokenExpiring', e);
+  private accessTokenExpiring = function() {
+    console.log('addAccessTokenExpiring');
+    this.store.dispatch(new oidcActions.UserExpiring());
   }.bind(this);
 
   private addSilentRenewError = function(e) {
     console.log('addAccessTokenExpired', e);
+    console.log(typeof e);
     this.store.dispatch(new oidcActions.SilentRenewError(e));
   }.bind(this);
 
@@ -49,8 +54,9 @@ export class OidcFacade {
     this.store.dispatch(new oidcActions.OnUserSignedOut());
   }.bind(this);
 
-  private addUserSessionChanged = function() {
-    console.log('USER SESSION CHANGED');
+  private addUserSessionChanged = function(e) {
+    console.log('USER SESSION CHANGED', e);
+    this.store.dispatch(new oidcActions.SessionChanged());
   };
 
   // OIDC Methods

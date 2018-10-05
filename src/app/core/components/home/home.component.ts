@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from 'oidc-client';
 import { OidcFacade } from 'ng-oidc-client';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -9,15 +10,20 @@ import { OidcFacade } from 'ng-oidc-client';
 })
 export class HomeComponent {
   title = 'ng-oidc-client-app';
-  user: User;
-  loading$;
+  identity$: Observable<User>;
+  loading$: Observable<boolean>;
+  expiring$: Observable<boolean>;
+  expired$: Observable<boolean>;
+  errors$: Observable<any>;
 
   constructor(private oidcFacade: OidcFacade) {
-    this.oidcFacade.getOidcUser();
     this.loading$ = this.oidcFacade.loading$;
-    this.oidcFacade.identity$.subscribe(user => {
-      this.user = user;
-    });
+    this.expiring$ = this.oidcFacade.expiring$;
+    this.expired$ = this.oidcFacade.expired$;
+
+    this.errors$ = this.oidcFacade.errors$;
+
+    this.identity$ = this.oidcFacade.identity$;
   }
 
   loginPopup() {

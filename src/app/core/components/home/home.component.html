@@ -5,8 +5,14 @@
   <div (click)="logoutPopup()">Logout Popup</div>
   <div (click)="logoutRedirect()">Logout Redirect</div>
 </div>
+<hr>
 <div>
+  <div>token expiring: <span>{{expiring$ | async}}</span></div>
+  <div>token expired: <span>{{expired$ | async}}</span></div>
+  <br><br>
+  errors: <span>{{errors$ | async | json}}</span>
+  <br><br>
   user loading: <span>{{loading$ | async}}</span>
-  <br>
+  <br><br>
   <span>{{user|json}}</span>
 </div>

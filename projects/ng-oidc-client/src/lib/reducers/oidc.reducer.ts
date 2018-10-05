@@ -11,6 +11,7 @@ export interface OidcState {
 
 export interface ErrorState {
   silentRenewError: any;
+  signInPopupError: any;
 }
 
 export const initialState: OidcState = {
@@ -18,7 +19,8 @@ export const initialState: OidcState = {
   loading: true,
   expiring: false,
   errors: {
-    silentRenewError: null
+    silentRenewError: null,
+    signInPopupError: null
   }
 };
 
@@ -90,6 +92,20 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Oid
         errors: {
           ...state.errors,
           silentRenewError: {
+            message: action.payload.message,
+            name: action.payload.name,
+            stack: action.payload.stack
+          }
+        }
+      };
+    }
+
+    case OidcActionTypes.SignInPopupError: {
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          signInPopupError: {
             message: action.payload.message,
             name: action.payload.name,
             stack: action.payload.stack

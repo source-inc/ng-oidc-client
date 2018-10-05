@@ -77,13 +77,7 @@ export class OidcFacade {
   }
 
   signinPopup(extraQueryParams?: any) {
-    this.oidcService
-      .signinPopup(extraQueryParams)
-      .pipe(
-        tap(user => console.log(user)),
-        catchError(error => of(console.log(error)))
-      )
-      .subscribe();
+    this.store.dispatch(new oidcActions.SignInPopup(extraQueryParams));
   }
 
   signinRedirect(extraQueryParams?: any) {

@@ -20,10 +20,12 @@ export enum OidcActionTypes {
   OnUserUnloaded = '[Oidc] on user unloaded',
   OnUserSignedOut = '[Oidc] on user signed out',
 
+  SignInPopup = '[Oidc] sign in popup',
+  SignInRedirect = '[Oidc] sign in redirect',
+  SignInPopupError = '[Oidc] sign in popup error',
+  SignOutPopup = '[Oidc] sign out popup',
+  SignOutRedirect = '[Oidc] sign out redirect',
   SignInSilent = '[Oidc] sign in silent',
-  OnIdentityChanged = '[Oidc] on identity changed',
-  OnIdentityEstablished = '[Oidc] on identity establised',
-  OnIdentityRemoved = '[Oidc] on identityremoved',
 
   OidcError = '[Oidc] error'
 }
@@ -36,10 +38,6 @@ export class GetOidcUser implements Action {
 
 export class RemoveOidcUser implements Action {
   readonly type = OidcActionTypes.RemoveOidcUser;
-}
-
-export class SignInSilent implements Action {
-  readonly type = OidcActionTypes.SignInSilent;
 }
 
 //
@@ -100,16 +98,38 @@ export class SilentRenewError implements Action {
   constructor(public payload: Error) {}
 }
 
-export class OnIdentityEstablished implements Action {
-  readonly type = OidcActionTypes.OnIdentityEstablished;
+export class SignInPopup implements Action {
+  readonly type = OidcActionTypes.SignInPopup;
+
+  constructor(public payload: any) {}
 }
 
-export class OnIdentityChanged implements Action {
-  readonly type = OidcActionTypes.OnIdentityChanged;
+export class SignInRedirect implements Action {
+  readonly type = OidcActionTypes.SignInRedirect;
+
+  constructor(public payload: any) {}
 }
 
-export class OnIdentityRemoved implements Action {
-  readonly type = OidcActionTypes.OnIdentityRemoved;
+export class SignInPopupError implements Action {
+  readonly type = OidcActionTypes.SignInPopupError;
+
+  constructor(public payload: Error) {}
+}
+
+export class SignOutPopup implements Action {
+  readonly type = OidcActionTypes.SignOutPopup;
+
+  constructor(public payload: any) {}
+}
+
+export class SignOutRedirect implements Action {
+  readonly type = OidcActionTypes.SignOutRedirect;
+
+  constructor(public payload: any) {}
+}
+
+export class SignInSilent implements Action {
+  readonly type = OidcActionTypes.SignInSilent;
 }
 
 export class OidcError implements Action {
@@ -135,9 +155,12 @@ export type OidcActionsUnion =
   | OnUserLoaded
   | OnUserUnloaded
   | OnUserSignedOut
+  //
+  | SignInPopup
+  | SignInRedirect
+  | SignInPopupError
+  | SignOutPopup
+  | SignOutRedirect
   | SignInSilent
-  | OnIdentityEstablished
-  | OnIdentityChanged
-  | OnIdentityRemoved
   //
   | OidcError;

@@ -6,12 +6,14 @@ import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgOidcClientModule } from 'ng-oidc-client';
-import { AppComponent } from './app.component';
-import { ProtectedComponent } from './protected/protected.component';
-import { HomeComponent } from './home/home.component';
-import { OidcGuardService } from './oidc-guard.service';
-import { OidcInterceptorService } from './oidc-interceptor.service';
-import { LoginComponent } from './login/login.component';
+import { AppComponent } from './core/components/app/app.component';
+import { HomeComponent } from './core/components/home/home.component';
+import { OidcGuardService } from './core/providers/oidc-guard.service';
+import { ProtectedComponent } from './core/components/protected/protected.component';
+import { LoginComponent } from './core/components/login/login.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { OidcInterceptorService } from './core/providers/oidc-interceptor.service';
+import { UserModule } from './modules/user/user.module';
 
 export interface State {
   router: RouterReducerState;
@@ -70,16 +72,28 @@ const routes: Routes = [
         },
         client: {
           id: 'ng-oidc-client-identity',
-          scope: 'openid profile offline_access'
+          scope: 'openid profile offline_access api1'
         }
       },
       accessTokenExpiringNotificationTime: 10,
       automaticSilentRenew: true,
       filterProtocolClaims: true,
       loadUserInfo: true
+    }),
+    UserModule.forRoot({
+      urls: {
+        api: 'https://localhost:5001'
+      }
     })
   ],
-  providers: [OidcGuardService, OidcInterceptorService],
+  providers: [
+    OidcGuardService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: OidcInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -85,7 +85,7 @@ export class OidcEffects {
     map((action: SignInPopup) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signinPopup(extraQueryParams).pipe(
-        concatMap(user => of()),
+        concatMap(user => of()), // fix this or add a popupcomplete action
         catchError(error => of(new SignInPopupError(error)))
       );
     })

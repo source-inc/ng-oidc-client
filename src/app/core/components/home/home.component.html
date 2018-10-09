@@ -1,18 +1,18 @@
 <div class="wrapper">
-  <div (click)="loginPopup()">Login Popup</div>
-  <div (click)="loginRedirect()">Login Redirect</div>
+  <div (click)="loginPopup()">Sign IN Popup</div>
+  <div (click)="loginRedirect()">Sign IN Redirect</div>
   <hr>
-  <div (click)="logoutPopup()">Logout Popup</div>
-  <div (click)="logoutRedirect()">Logout Redirect</div>
+  <div (click)="logoutPopup()">Sign OUT Popup</div>
+  <div (click)="logoutRedirect()">Sign OUT Redirect</div>
 </div>
 <hr>
 <div>
   <div>token expiring: <span>{{expiring$ | async}}</span></div>
   <div>token expired: <span>{{expired$ | async}}</span></div>
-  <br><br>
-  errors: <span>{{errors$ | async | json}}</span>
-  <br><br>
+  <hr>
+  errors: <span class="errors">{{errors$ | async | json}}</span>
+  <hr>
   user loading: <span>{{loading$ | async}}</span>
-  <br><br>
+  <hr>
   <span>{{identity$ | async |json}}</span>
 </div>

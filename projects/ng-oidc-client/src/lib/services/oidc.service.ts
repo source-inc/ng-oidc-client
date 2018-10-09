@@ -99,7 +99,7 @@ export class OidcService {
     }
   }
 
-  signinPopup(extraQueryParams?: any): Observable<OidcUser> {
+  signInPopup(extraQueryParams?: any): Observable<OidcUser> {
     this.setCallbackInformation(true);
     if (extraQueryParams) {
       const params = {
@@ -110,7 +110,7 @@ export class OidcService {
     return from(this.oidcUserManager.signinPopup());
   }
 
-  signinRedirect(extraQueryParams?: any): Observable<OidcUser> {
+  signInRedirect(extraQueryParams?: any): Observable<OidcUser> {
     this.setCallbackInformation(false);
 
     if (extraQueryParams) {
@@ -122,17 +122,17 @@ export class OidcService {
     return from(this.oidcUserManager.signinRedirect());
   }
 
-  signoutRedirect(args?: any): Observable<any> {
+  signOutRedirect(args?: any): Observable<any> {
     this.setCallbackInformation(false);
     return from(this.oidcUserManager.signoutRedirect(args));
   }
 
-  signoutPopup(args?: any): Observable<any> {
+  signOutPopup(args?: any): Observable<any> {
     this.setCallbackInformation(true);
     return from(this.oidcUserManager.signoutPopup());
   }
 
-  signinSilent(): Observable<OidcUser> {
+  signInSilent(): Observable<OidcUser> {
     return from(this.oidcUserManager.signinSilent());
   }
 

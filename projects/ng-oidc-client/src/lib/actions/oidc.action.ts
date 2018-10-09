@@ -20,12 +20,16 @@ export enum OidcActionTypes {
   OnUserUnloaded = '[Oidc] on user unloaded',
   OnUserSignedOut = '[Oidc] on user signed out',
 
+  // Sign In
   SignInPopup = '[Oidc] sign in popup',
   SignInRedirect = '[Oidc] sign in redirect',
-  SignInPopupError = '[Oidc] sign in popup error',
+  SignInSilent = '[Oidc] sign in silent',
+  SignInError = '[Oidc] sign in popup error',
+
+  // Sign Out
   SignOutPopup = '[Oidc] sign out popup',
   SignOutRedirect = '[Oidc] sign out redirect',
-  SignInSilent = '[Oidc] sign in silent',
+  SignOutError = '[Oidc] sign out popup error',
 
   OidcError = '[Oidc] error'
 }
@@ -110,8 +114,8 @@ export class SignInRedirect implements Action {
   constructor(public payload: any) {}
 }
 
-export class SignInPopupError implements Action {
-  readonly type = OidcActionTypes.SignInPopupError;
+export class SignInError implements Action {
+  readonly type = OidcActionTypes.SignInError;
 
   constructor(public payload: Error) {}
 }
@@ -126,6 +130,12 @@ export class SignOutRedirect implements Action {
   readonly type = OidcActionTypes.SignOutRedirect;
 
   constructor(public payload: any) {}
+}
+
+export class SignOutError implements Action {
+  readonly type = OidcActionTypes.SignOutError;
+
+  constructor(public payload: Error) {}
 }
 
 export class SignInSilent implements Action {
@@ -158,9 +168,11 @@ export type OidcActionsUnion =
   //
   | SignInPopup
   | SignInRedirect
-  | SignInPopupError
+  | SignInSilent
+  | SignInError
+  //
   | SignOutPopup
   | SignOutRedirect
-  | SignInSilent
+  | SignOutError
   //
   | OidcError;

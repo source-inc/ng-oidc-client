@@ -69,6 +69,9 @@ export class OidcFacade {
     this.store.dispatch(new oidcActions.RemoveOidcUser());
   }
 
+  /**
+   * Convenient function to wait for loaded
+   */
   waitForAuthenticationLoaded(): Observable<boolean> {
     return this.loading$.pipe(
       filter(loading => loading === false),
@@ -81,7 +84,7 @@ export class OidcFacade {
   }
 
   signinRedirect(extraQueryParams?: any) {
-    this.oidcService.signinRedirect(extraQueryParams);
+    this.store.dispatch(new oidcActions.SignInRedirect(extraQueryParams));
   }
 
   signInSilent() {
@@ -89,11 +92,11 @@ export class OidcFacade {
   }
 
   signoutPopup(args?: any) {
-    this.oidcService.signoutPopup(args);
+    this.oidcService.signOutPopup(args);
   }
 
   signoutRedirect(args?: any) {
-    this.oidcService.signoutRedirect(args);
+    this.oidcService.signOutRedirect(args);
   }
 
   getSignoutUrl(args?: any) {

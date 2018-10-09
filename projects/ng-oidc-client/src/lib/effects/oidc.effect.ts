@@ -13,9 +13,14 @@ import {
   UserDoneLoading,
   UserFound,
   SignInPopup,
-  SignInPopupError
+  SignInRedirect,
+  SignInError,
+  SignOutPopup,
+  SignOutError,
+  SignOutRedirect
 } from '../actions/oidc.action';
 import { OidcService } from '../services/oidc.service';
+import { ACTION_NO_ACTION } from '../models';
 
 @Injectable()
 export class OidcEffects {
@@ -84,9 +89,21 @@ export class OidcEffects {
     ofType(OidcActionTypes.SignInPopup),
     map((action: SignInPopup) => action.payload),
     concatMap(extraQueryParams => {
-      return this.oidcService.signinPopup(extraQueryParams).pipe(
-        concatMap(user => of()), // fix this or add a popupcomplete action
-        catchError(error => of(new SignInPopupError(error)))
+      return this.oidcService.signInPopup(extraQueryParams).pipe(
+        concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
+        catchError(error => of(new SignInError(error)))
+      );
+    })
+  );
+
+  @Effect()
+  signInRedirect$: Observable<Action> = this.actions$.pipe(
+    ofType(OidcActionTypes.SignInRedirect),
+    map((action: SignInRedirect) => action.payload),
+    concatMap(extraQueryParams => {
+      return this.oidcService.signInRedirect(extraQueryParams).pipe(
+        concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
+        catchError(error => of(new SignInError(error)))
       );
     })
   );
@@ -96,7 +113,7 @@ export class OidcEffects {
     ofType(OidcActionTypes.SignInSilent),
     tap(() => console.log('Effect SignInSilent - Trigger silent signin manually')),
     switchMap(() =>
-      this.oidcService.signinSilent().pipe(
+      this.oidcService.signInSilent().pipe(
         tap((userData: OidcUser) => console.log('Effect SignInSilent - Got user from silent sign in', userData)),
         switchMap((userData: OidcUser) => {
           return [new UserFound(userData)];
@@ -111,10 +128,28 @@ export class OidcEffects {
     )
   );
 
-  @Effect({ dispatch: false })
-  signInSilentError$ = this.actions$.pipe(
-    ofType(OidcActionTypes.SilentRenewError),
-    tap(error => console.log('Effect SilentRenewError - There was an error renewing user token', error))
+  @Effect()
+  signOutPopup$: Observable<Action> = this.actions$.pipe(
+    ofType(OidcActionTypes.SignOutPopup),
+    map((action: SignOutPopup) => action.payload),
+    concatMap(extraQueryParams => {
+      return this.oidcService.signOutPopup(extraQueryParams).pipe(
+        concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
+        catchError(error => of(new SignOutError(error)))
+      );
+    })
+  );
+
+  @Effect()
+  signOutRedirect$: Observable<Action> = this.actions$.pipe(
+    ofType(OidcActionTypes.SignOutRedirect),
+    map((action: SignOutRedirect) => action.payload),
+    concatMap(extraQueryParams => {
+      return this.oidcService.signOutRedirect(extraQueryParams).pipe(
+        concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
+        catchError(error => of(new SignOutError(error)))
+      );
+    })
   );
 
   @Effect({ dispatch: false })

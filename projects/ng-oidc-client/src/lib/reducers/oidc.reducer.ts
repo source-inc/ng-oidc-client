@@ -71,7 +71,7 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Oid
       };
     }
 
-    case OidcActionTypes.UserExpiring: {
+    case OidcActionTypes.OnAccessTokenExpiring: {
       console.log('reducer expiring');
       return {
         ...state,
@@ -86,7 +86,7 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Oid
       };
     }
 
-    case OidcActionTypes.SilentRenewError: {
+    case OidcActionTypes.OnSilentRenewError: {
       return {
         ...state,
         errors: {

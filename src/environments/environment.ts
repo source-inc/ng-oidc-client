@@ -3,7 +3,17 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  ngOidcClient: {
+    authority: 'https://localhost:5001',
+    redirect_uri: 'http://localhost:4200/callback.html',
+    post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
+    silent_redirect_uri: 'http://localhost:4200/renew-callback.html',
+    response_type: 'id_token token',
+
+    client_id: 'ng-oidc-client-identity',
+    scope: 'openid profile offline_access api1'
+  }
 };
 
 /*

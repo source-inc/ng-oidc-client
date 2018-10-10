@@ -162,13 +162,13 @@ export class OidcService {
 
   private getClientSettings(): UserManagerSettings {
     const settings = {
-      authority: this.config.environment.urls.authority,
-      client_id: this.config.environment.client.id,
-      redirect_uri: this.config.environment.urls.redirect_uri,
-      post_logout_redirect_uri: this.config.environment.urls.post_logout_redirect_uri,
+      authority: this.config.authority,
+      client_id: this.config.client_id,
+      redirect_uri: this.config.redirect_uri,
+      post_logout_redirect_uri: this.config.post_logout_redirect_uri,
       response_type: 'id_token token',
-      scope: this.config.environment.client.scope,
-      silent_redirect_uri: this.config.environment.urls.silent_redirect_uri,
+      scope: this.config.scope,
+      silent_redirect_uri: this.config.silent_redirect_uri,
       automaticSilentRenew: this.config.automaticSilentRenew,
       accessTokenExpiringNotificationTime: this.config.accessTokenExpiringNotificationTime,
       filterProtocolClaims: this.config.filterProtocolClaims,

@@ -9,7 +9,7 @@ import {
   OidcError,
   OnUserLoaded,
   SignInSilent,
-  SilentRenewError,
+  OnSilentRenewError,
   UserDoneLoading,
   UserFound,
   SignInPopup,
@@ -122,7 +122,7 @@ export class OidcEffects {
           console.log('Effect SignInSilent - Caught error silent renew', error);
           // Something went wrong renewing the access token.
           // Set loading done so the auth guard will resolve.
-          return of(new SilentRenewError(error), new UserDoneLoading());
+          return of(new OnSilentRenewError(error), new UserDoneLoading());
         })
       )
     )

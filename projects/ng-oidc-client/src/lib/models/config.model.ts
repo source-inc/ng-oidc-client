@@ -1,11 +1,7 @@
 import { InjectionToken } from '@angular/core';
-import { EnvironmentConfig } from '.';
+import { UserManagerSettings } from 'oidc-client';
 
-export interface Config {
-  environment: EnvironmentConfig;
-  automaticSilentRenew?: boolean;
-  accessTokenExpiringNotificationTime?: number;
-  filterProtocolClaims?: boolean;
-  loadUserInfo?: boolean;
+export interface Config extends UserManagerSettings {
+  test?: string;
 }
 export const OIDC_CONFIG = new InjectionToken<Config>('OIDC_CONFIG');

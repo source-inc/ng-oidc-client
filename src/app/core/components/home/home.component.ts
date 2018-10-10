@@ -25,20 +25,4 @@ export class HomeComponent {
 
     this.identity$ = this.oidcFacade.identity$;
   }
-
-  loginPopup() {
-    this.oidcFacade.signinPopup();
-  }
-
-  logoutPopup() {
-    this.oidcFacade.signoutPopup();
-  }
-
-  loginRedirect() {
-    this.oidcFacade.signinRedirect();
-  }
-
-  logoutRedirect() {
-    this.oidcFacade.signoutRedirect();
-  }
 }

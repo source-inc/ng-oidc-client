@@ -68,6 +68,144 @@ export class HomeComponent {
 ```
 Alternatively you can you also use `.signinRedirect();` or `.signoutRedirect();`. 
 
+Create a new directory called `static` below the `src` folder, to serve the static callback HTML sites.
+```bash
+src/static
+├── callback.html
+├── renew-callback.html
+└── signout-callback.html
+```
+Example for a `callback.html`
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Callback</title>
+  <link rel="icon"
+        type="image/x-icon"
+        href="favicon.png">
+  <script src="oidc-client.min.js"
+          type="application/javascript"></script>
+</head>
+
+<body>
+  <script>
+    var Oidc = window.Oidc;
+
+    var config = {
+      userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
+    }
+
+    if ((Oidc && Oidc.Log && Oidc.Log.logger)) {
+      Oidc.Log.logger = console;
+    }
+    var isPopupCallback = JSON.parse(window.localStorage.getItem('ngoidc:isPopupCallback'));
+
+    if (isPopupCallback) {
+      new Oidc.UserManager(config).signinPopupCallback();
+    } else {
+      new Oidc.UserManager(config).signinRedirectCallback().then(t => {
+        window.location.href = '/';
+      });
+    }
+  </script>
+</body>
+
+</html>
+```
+
+Example for a `renew-callback.html`
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Renew Callback</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="favicon.png">
+</head>
+
+<body>
+    <script src="oidc-client.min.js"></script>
+    <script>
+        var config = {
+            userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
+        }
+        new Oidc.UserManager(config).signinSilentCallback().catch(function (e) {
+            console.error(e);
+        });
+    </script>
+</body>
+
+</html>
+```
+
+Example for a `signout-callback.html`
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Signout Callback</title>
+  <link rel="icon"
+        type="image/x-icon"
+        href="favicon.png">
+  <script src="oidc-client.min.js"
+          type="application/javascript"></script>
+</head>
+
+<body>
+  <script>
+    var Oidc = window.Oidc;
+
+    var config = {
+      userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
+    }
+
+    if ((Oidc && Oidc.Log && Oidc.Log.logger)) {
+      Oidc.Log.logger = console;
+    }
+
+    var isPopupCallback = JSON.parse(window.localStorage.getItem('ngoidc:isPopupCallback'));
+
+    if (isPopupCallback) {
+      new Oidc.UserManager(config).signoutPopupCallback();
+    } else {
+      new Oidc.UserManager(config).signoutRedirectCallback().then(test => {
+        window.location.href = '/';
+      });
+    }
+  </script>
+</body>
+
+</html>
+```
+
+Modify your `angular.json` to include the `static` assets and `oidc-client`
+```diff
+...
+"assets": [
+    "src/favicon.ico",
+    "src/assets",
++   {
++     "glob": "**/*",
++     "input": "src/static",
++     "output": "/"
++   },
++   {
++     "glob": "oidc-client.min.js",
++     "input": "node_modules/oidc-client/dist",
++     "output": "/"
++   }
+  ],
+...
+```
+
 You will be able to authenticate against your configurated identity provider and the obtained user will be accessible in through the created state.
 
 ## Protecting Routes using an AuthGuard 💂

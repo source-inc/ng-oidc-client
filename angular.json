@@ -28,7 +28,7 @@
               },
               {
                 "glob": "oidc-client.min.js",
-                "input": "src/../node_modules/oidc-client/dist",
+                "input": "node_modules/oidc-client/dist",
                 "output": "/"
               }
             ],

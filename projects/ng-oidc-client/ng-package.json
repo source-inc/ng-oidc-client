@@ -7,7 +7,6 @@
     "umdModuleIds": {
       "@ngrx/store":"ngrx-store",
       "@ngrx/effects":"ngrx-effects",
-      "@ngrx/router-store":"ngrx-router-store",
       "oidc-client":"Oidc"
     }
   }

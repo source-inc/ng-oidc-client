@@ -27,10 +27,13 @@ export class OidcService {
     @Inject(OIDC_CONFIG) private config: Config,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    Log.level = Log.NONE;
-    Log.logger = console;
+    const { log: logSettings, oidc_config: clientSettings } = this.config;
 
-    const clientSettings = this.getClientSettings();
+    if (logSettings) {
+      Log.level = logSettings.level;
+      Log.logger = logSettings.logger;
+    }
+
     this.oidcUserManager = new UserManager(clientSettings);
     this.oidcClient = new OidcClient(clientSettings);
   }

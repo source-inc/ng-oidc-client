@@ -100,13 +100,13 @@ export class OnSilentRenewError implements Action {
   constructor(public payload: Error) {}
 }
 
-export class SignInPopup implements Action {
+export class SigninPopup implements Action {
   readonly type = OidcActionTypes.SignInPopup;
 
   constructor(public payload: any) {}
 }
 
-export class SignInRedirect implements Action {
+export class SigninRedirect implements Action {
   readonly type = OidcActionTypes.SignInRedirect;
 
   constructor(public payload: any) {}
@@ -118,13 +118,13 @@ export class SignInError implements Action {
   constructor(public payload: Error) {}
 }
 
-export class SignOutPopup implements Action {
+export class SignoutPopup implements Action {
   readonly type = OidcActionTypes.SignOutPopup;
 
   constructor(public payload: any) {}
 }
 
-export class SignOutRedirect implements Action {
+export class SignoutRedirect implements Action {
   readonly type = OidcActionTypes.SignOutRedirect;
 
   constructor(public payload: any) {}
@@ -136,7 +136,7 @@ export class SignOutError implements Action {
   constructor(public payload: Error) {}
 }
 
-export class SignInSilent implements Action {
+export class SigninSilent implements Action {
   readonly type = OidcActionTypes.SignInSilent;
 }
 
@@ -164,13 +164,13 @@ export type OidcActionsUnion =
   | OnUserSignedOut
   | OnSessionChanged
   //
-  | SignInPopup
-  | SignInRedirect
-  | SignInSilent
+  | SigninPopup
+  | SigninRedirect
+  | SigninSilent
   | SignInError
   //
-  | SignOutPopup
-  | SignOutRedirect
+  | SignoutPopup
+  | SignoutRedirect
   | SignOutError
   //
   | OidcError;

@@ -16,11 +16,11 @@ export class OidcFacade {
     this.registerDefaultEvents();
   }
 
-  loading$ = this.store.select(fromOidc.getOidcLoading);
-  expiring$ = this.store.select(fromOidc.isIdentityExpiring);
-  expired$ = this.store.select(fromOidc.isIdentityExpired);
-  identity$ = this.store.select(fromOidc.getOidcIdentity);
-  errors$ = this.store.select(fromOidc.selectOidcErrorState);
+  loading$: Observable<boolean> = this.store.select(fromOidc.getOidcLoading);
+  expiring$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpiring);
+  expired$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpired);
+  identity$: Observable<OidcUser> = this.store.select(fromOidc.getOidcIdentity);
+  errors$: Observable<fromOidc.ErrorState> = this.store.select(fromOidc.selectOidcErrorState);
 
   // default bindings to events
   private addUserUnLoaded = function() {

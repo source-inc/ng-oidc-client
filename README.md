@@ -45,6 +45,10 @@ export const rootStore: ActionReducerMap<State> = {
 +       accessTokenExpiringNotificationTime: 10,
 +       automaticSilentRenew: true,
 +       userStore: new WebStorageStateStore({ store: window.localStorage })
++     },
++     log: {
++       logger: console,
++       level: Log.NONE
 +     }
 +   })
   ],

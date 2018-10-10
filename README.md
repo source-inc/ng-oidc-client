@@ -34,12 +34,18 @@ export const rootStore: ActionReducerMap<State> = {
     StoreModule.forRoot(rootStore),
     EffectsModule.forRoot([]),
 +    NgOidcClientModule.forRoot({
-+     authority: 'https://localhost:5001',
-+     redirect_uri: 'http://localhost:4200/callback.html',
-+     post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
-+     silent_redirect_uri: 'http://localhost:4200/renew-callback.html',
-+     client_id: 'ng-oidc-client-identity',
-+     scope: 'openid profile offline_access api1'
++     oidc_config: {
++       authority: 'https://localhost:5001',
++       client_id: 'ng-oidc-client-identity',
++       redirect_uri: 'http://localhost:4200/callback.html',
++       response_type: 'id_token token',
++       scope: 'openid profile offline_access api1',
++       post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
++       silent_redirect_uri: 'http://localhost:4200/renew-callback.html',
++       accessTokenExpiringNotificationTime: 10,
++       automaticSilentRenew: true,
++       userStore: new WebStorageStateStore({ store: window.localStorage })
++     }
 +   })
   ],
   providers: [],

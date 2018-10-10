@@ -20,9 +20,7 @@ export class HomeComponent {
     this.loading$ = this.oidcFacade.loading$;
     this.expiring$ = this.oidcFacade.expiring$;
     this.expired$ = this.oidcFacade.expired$;
-
     this.errors$ = this.oidcFacade.errors$;
-
     this.identity$ = this.oidcFacade.identity$;
   }
 

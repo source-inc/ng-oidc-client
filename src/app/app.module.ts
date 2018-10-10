@@ -14,6 +14,7 @@ import { LoginComponent } from './core/components/login/login.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { OidcInterceptorService } from './core/providers/oidc-interceptor.service';
 import { UserModule } from './modules/user/user.module';
+import { WebStorageStateStore, Log } from 'oidc-client';
 
 export interface State {
   router: RouterReducerState;
@@ -53,32 +54,22 @@ const routes: Routes = [
       logOnly: true
     }),
     NgOidcClientModule.forRoot({
-      environment: {
-        // urls: {
-        //   authority: 'http://ng-oidc-client.auth0.com',
-        //   redirect_uri: 'http://localhost:4200/callback.html',
-        //   post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
-        //   silent_redirect_uri: 'http://localhost:4200/renew-callback.html'
-        // },
-        // client: {
-        //   id: 'ZKGJvKHLI7KYsjBP9HZFXPF4dX3TA6Eq',
-        //   scope: 'openid profile offline_access'
-        // }
-        urls: {
-          authority: 'https://localhost:5001',
-          redirect_uri: 'http://localhost:4200/callback.html',
-          post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
-          silent_redirect_uri: 'http://localhost:4200/renew-callback.html'
-        },
-        client: {
-          id: 'ng-oidc-client-identity',
-          scope: 'openid profile offline_access api1'
-        }
+      oidc_config: {
+        authority: 'https://localhost:5001',
+        client_id: 'ng-oidc-client-identity',
+        redirect_uri: 'http://localhost:4200/callback.html',
+        response_type: 'id_token token',
+        scope: 'openid profile offline_access api1',
+        post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
+        silent_redirect_uri: 'http://localhost:4200/renew-callback.html',
+        accessTokenExpiringNotificationTime: 10,
+        automaticSilentRenew: true,
+        userStore: new WebStorageStateStore({ store: window.localStorage })
       },
-      accessTokenExpiringNotificationTime: 10,
-      automaticSilentRenew: true,
-      filterProtocolClaims: true,
-      loadUserInfo: true
+      log: {
+        logger: console,
+        level: Log.DEBUG
+      }
     }),
     UserModule.forRoot({
       urls: {

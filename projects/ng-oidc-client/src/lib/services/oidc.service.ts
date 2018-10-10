@@ -27,10 +27,13 @@ export class OidcService {
     @Inject(OIDC_CONFIG) private config: Config,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    Log.level = Log.NONE;
-    Log.logger = console;
+    const { log: logSettings, oidc_config: clientSettings } = this.config;
 
-    const clientSettings = this.getClientSettings();
+    if (logSettings) {
+      Log.level = logSettings.level;
+      Log.logger = logSettings.logger;
+    }
+
     this.oidcUserManager = new UserManager(clientSettings);
     this.oidcClient = new OidcClient(clientSettings);
   }
@@ -158,39 +161,6 @@ export class OidcService {
 
   getSignoutUrl(args?: any): Observable<SignoutRequest> {
     return from(this.oidcUserManager.createSignoutRequest(args));
-  }
-
-  private getClientSettings(): UserManagerSettings {
-    const settings = {
-      authority: this.config.environment.urls.authority,
-      client_id: this.config.environment.client.id,
-      redirect_uri: this.config.environment.urls.redirect_uri,
-      post_logout_redirect_uri: this.config.environment.urls.post_logout_redirect_uri,
-      response_type: 'id_token token',
-      scope: this.config.environment.client.scope,
-      silent_redirect_uri: this.config.environment.urls.silent_redirect_uri,
-      automaticSilentRenew: this.config.automaticSilentRenew,
-      accessTokenExpiringNotificationTime: this.config.accessTokenExpiringNotificationTime,
-      filterProtocolClaims: this.config.filterProtocolClaims,
-      loadUserInfo: this.config.loadUserInfo,
-      userStore: new WebStorageStateStore({ store: window.localStorage }),
-      includeIdTokenInSilentRenew: true
-      // metadata: {
-      //   authorization_endpoint: 'https://ng-oidc-client.auth0.com/authorize',
-      //   issuer: 'https://ng-oidc-client.auth0.com/',
-      //   token_endpoint: 'https://ng-oidc-client.auth0.com/oauth/token',
-      //   jwks_uri: 'https://ng-oidc-client.auth0.com/.well-known/jwks.json',
-      //   userinfo_endpoint: 'https://ng-oidc-client.auth0.com/userinfo',
-      //   mfa_challenge_endpoint: 'https://ng-oidc-client.auth0.com/mfa/challenge',
-      //   registration_endpoint: 'https://ng-oidc-client.auth0.com/oidc/register',
-      //   revocation_endpoint: 'https://ng-oidc-client.auth0.com/oauth/revoke',
-      //   end_session_endpoint:
-      //     `https://ng-oidc-client.auth0.com/v2/logout?` +
-      //     `returnTo=http%3A%2F%2Flocalhost%3A4200%2Fsignout-callback.html&client_id=ZKGJvKHLI7KYsjBP9HZFXPF4dX3TA6Eq`
-      // }
-    } as UserManagerSettings;
-
-    return settings;
   }
 
   private setCallbackInformation(isPopupCallback: boolean) {

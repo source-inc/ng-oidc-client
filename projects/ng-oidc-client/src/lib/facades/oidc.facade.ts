@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { User as OidcUser } from 'oidc-client';
-import { Observable, of } from 'rxjs';
-import { filter, take, catchError, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 import * as oidcActions from '../actions/oidc.action';
 import { OidcEvent } from '../models';
 import * as fromOidc from '../reducers/oidc.reducer';
@@ -16,11 +16,11 @@ export class OidcFacade {
     this.registerDefaultEvents();
   }
 
-  loading$ = this.store.select(fromOidc.getOidcLoading);
-  expiring$ = this.store.select(fromOidc.isIdentityExpiring);
-  expired$ = this.store.select(fromOidc.isIdentityExpired);
-  identity$ = this.store.select(fromOidc.getOidcIdentity);
-  errors$ = this.store.select(fromOidc.selectOidcErrorState);
+  loading$: Observable<boolean> = this.store.select(fromOidc.getOidcLoading);
+  expiring$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpiring);
+  expired$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpired);
+  identity$: Observable<OidcUser> = this.store.select(fromOidc.getOidcIdentity);
+  errors$: Observable<fromOidc.ErrorState> = this.store.select(fromOidc.selectOidcErrorState);
 
   // default bindings to events
   private addUserUnLoaded = function() {

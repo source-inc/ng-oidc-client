@@ -7,18 +7,18 @@ export enum OidcActionTypes {
 
   UserExpired = '[Oidc] user expired',
   UserFound = '[Oidc] user found',
-  SilentRenewError = '[Oidc] silent renew error',
 
-  SessionTerminated = '[Oidc] session terminated',
-  SessionChanged = '[Oidc] session changed',
-
-  UserExpiring = '[Oidc] user expiring',
-  UserLoading = '[Oidc] user loading',
-  UserDoneLoading = '[Oidc] user done loading',
-  UserLoadingError = '[Oidc] user loading error',
+  OnAccessTokenExpired = '[Oidc] on access token expired',
+  OnAccessTokenExpiring = '[Oidc] user expiring',
+  OnSilentRenewError = '[Oidc] on silent renew error',
   OnUserLoaded = '[Oidc] on user loaded',
   OnUserUnloaded = '[Oidc] on user unloaded',
   OnUserSignedOut = '[Oidc] on user signed out',
+  OnSessionChanged = '[Oidc] session changed',
+
+  UserLoading = '[Oidc] user loading',
+  UserDoneLoading = '[Oidc] user done loading',
+  UserLoadingError = '[Oidc] user loading error',
 
   // Sign In
   SignInPopup = '[Oidc] sign in popup',
@@ -44,8 +44,6 @@ export class RemoveOidcUser implements Action {
   readonly type = OidcActionTypes.RemoveOidcUser;
 }
 
-//
-
 export class UserExpired implements Action {
   readonly type = OidcActionTypes.UserExpired;
 }
@@ -56,19 +54,19 @@ export class UserFound implements Action {
   constructor(public payload: OidcUser) {}
 }
 
-export class SessionTerminated implements Action {
-  readonly type = OidcActionTypes.SessionTerminated;
+export class OnSessionChanged implements Action {
+  readonly type = OidcActionTypes.OnSessionChanged;
 }
 
-export class SessionChanged implements Action {
-  readonly type = OidcActionTypes.SessionChanged;
+export class OnAccessTokenExpired implements Action {
+  readonly type = OidcActionTypes.OnAccessTokenExpired;
 }
 
-export class UserExpiring implements Action {
-  readonly type = OidcActionTypes.UserExpiring;
+export class OnAccessTokenExpiring implements Action {
+  readonly type = OidcActionTypes.OnAccessTokenExpiring;
 }
 
-export class UserLoading implements Action {
+export class OnUserLoading implements Action {
   readonly type = OidcActionTypes.UserLoading;
 }
 
@@ -96,19 +94,19 @@ export class OnUserSignedOut implements Action {
   readonly type = OidcActionTypes.OnUserSignedOut;
 }
 
-export class SilentRenewError implements Action {
-  readonly type = OidcActionTypes.SilentRenewError;
+export class OnSilentRenewError implements Action {
+  readonly type = OidcActionTypes.OnSilentRenewError;
 
   constructor(public payload: Error) {}
 }
 
-export class SignInPopup implements Action {
+export class SigninPopup implements Action {
   readonly type = OidcActionTypes.SignInPopup;
 
   constructor(public payload: any) {}
 }
 
-export class SignInRedirect implements Action {
+export class SigninRedirect implements Action {
   readonly type = OidcActionTypes.SignInRedirect;
 
   constructor(public payload: any) {}
@@ -120,13 +118,13 @@ export class SignInError implements Action {
   constructor(public payload: Error) {}
 }
 
-export class SignOutPopup implements Action {
+export class SignoutPopup implements Action {
   readonly type = OidcActionTypes.SignOutPopup;
 
   constructor(public payload: any) {}
 }
 
-export class SignOutRedirect implements Action {
+export class SignoutRedirect implements Action {
   readonly type = OidcActionTypes.SignOutRedirect;
 
   constructor(public payload: any) {}
@@ -138,7 +136,7 @@ export class SignOutError implements Action {
   constructor(public payload: Error) {}
 }
 
-export class SignInSilent implements Action {
+export class SigninSilent implements Action {
   readonly type = OidcActionTypes.SignInSilent;
 }
 
@@ -153,26 +151,26 @@ export type OidcActionsUnion =
   //
   | UserExpired
   | UserFound
-  | SilentRenewError
   //
-  | SessionTerminated
-  | SessionChanged
-  //
-  | UserExpiring
-  | UserLoading
+  | OnUserLoading
   | UserDoneLoading
   | UserLoadingError
+  // Events
+  | OnAccessTokenExpired
+  | OnAccessTokenExpiring
+  | OnSilentRenewError
   | OnUserLoaded
   | OnUserUnloaded
   | OnUserSignedOut
+  | OnSessionChanged
   //
-  | SignInPopup
-  | SignInRedirect
-  | SignInSilent
+  | SigninPopup
+  | SigninRedirect
+  | SigninSilent
   | SignInError
   //
-  | SignOutPopup
-  | SignOutRedirect
+  | SignoutPopup
+  | SignoutRedirect
   | SignOutError
   //
   | OidcError;

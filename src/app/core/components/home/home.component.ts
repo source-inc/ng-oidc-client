@@ -23,20 +23,4 @@ export class HomeComponent {
     this.errors$ = this.oidcFacade.errors$;
     this.identity$ = this.oidcFacade.identity$;
   }
-
-  loginPopup() {
-    this.oidcFacade.signinPopup();
-  }
-
-  logoutPopup() {
-    this.oidcFacade.signoutPopup();
-  }
-
-  loginRedirect() {
-    this.oidcFacade.signinRedirect();
-  }
-
-  logoutRedirect() {
-    this.oidcFacade.signoutRedirect();
-  }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { User as OidcUser } from 'oidc-client';
+import { User as OidcUser, SignoutRequest, SigninRequest } from 'oidc-client';
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { OidcActions } from '../actions';
@@ -30,17 +30,18 @@ export class OidcFacade {
 
   private accessTokenExpired = function(e) {
     console.log('addAccessTokenExpired', e);
+    this.store.dispatch(new OidcActions.OnAccessTokenExpired());
   }.bind(this);
 
   private accessTokenExpiring = function() {
     console.log('addAccessTokenExpiring');
-    this.store.dispatch(new OidcActions.UserExpiring());
+    this.store.dispatch(new OidcActions.OnAccessTokenExpiring());
   }.bind(this);
 
   private addSilentRenewError = function(e) {
     console.log('addAccessTokenExpired', e);
     console.log(typeof e);
-    this.store.dispatch(new OidcActions.SilentRenewError(e));
+    this.store.dispatch(new OidcActions.OnSilentRenewError(e));
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
@@ -56,7 +57,7 @@ export class OidcFacade {
 
   private addUserSessionChanged = function(e) {
     console.log('USER SESSION CHANGED', e);
-    this.store.dispatch(new OidcActions.SessionChanged());
+    this.store.dispatch(new OidcActions.OnSessionChanged());
   };
 
   // OIDC Methods
@@ -80,27 +81,31 @@ export class OidcFacade {
   }
 
   signinPopup(extraQueryParams?: any) {
-    this.store.dispatch(new OidcActions.SignInPopup(extraQueryParams));
+    this.store.dispatch(new OidcActions.SigninPopup(extraQueryParams));
   }
 
   signinRedirect(extraQueryParams?: any) {
-    this.store.dispatch(new OidcActions.SignInRedirect(extraQueryParams));
+    this.store.dispatch(new OidcActions.SigninRedirect(extraQueryParams));
   }
 
-  signInSilent() {
-    this.store.dispatch(new OidcActions.SignInSilent());
+  signinSilent() {
+    this.store.dispatch(new OidcActions.SigninSilent());
   }
 
-  signoutPopup(args?: any) {
-    this.oidcService.signOutPopup(args);
+  signoutPopup(extraQueryParams?: any) {
+    this.store.dispatch(new OidcActions.SignoutPopup(extraQueryParams));
   }
 
-  signoutRedirect(args?: any) {
-    this.oidcService.signOutRedirect(args);
+  signoutRedirect(extraQueryParams?: any) {
+    this.store.dispatch(new OidcActions.SignoutRedirect(extraQueryParams));
   }
 
-  getSignoutUrl(args?: any) {
-    return this.oidcService.getSignoutUrl(args);
+  getSigninUtrl(extraQueryParams?: any): Observable<SigninRequest> {
+    return this.oidcService.getSigninUrl(extraQueryParams);
+  }
+
+  getSignoutUrl(extraQueryParams?: any): Observable<SignoutRequest> {
+    return this.oidcService.getSignoutUrl(extraQueryParams);
   }
 
   registerEvent(event: OidcEvent, callback: (...ev: any[]) => void) {

@@ -5,7 +5,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { NgOidcClientModule } from 'ng-oidc-client';
+import { NgOidcClientModule, Config } from 'ng-oidc-client';
 import { AppComponent } from './core/components/app/app.component';
 import { HomeComponent } from './core/components/home/home.component';
 import { OidcGuardService } from './core/providers/oidc-guard.service';

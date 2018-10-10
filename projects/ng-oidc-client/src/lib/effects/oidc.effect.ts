@@ -24,7 +24,7 @@ export class OidcEffects {
           const r: Action[] = [new OidcActions.UserFound(userData)];
           // user expired, initiate silent sign-in
           if (userData != null && userData.expired === true) {
-            r.push(new OidcActions.SignInSilent());
+            r.push(new OidcActions.SigninSilent());
           }
           return r;
         }),
@@ -68,7 +68,7 @@ export class OidcEffects {
   @Effect()
   signInPopup$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignInPopup),
-    map((action: OidcActions.SignInPopup) => action.payload),
+    map((action: OidcActions.SigninPopup) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signInPopup(extraQueryParams).pipe(
         concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
@@ -80,7 +80,7 @@ export class OidcEffects {
   @Effect()
   signInRedirect$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignInRedirect),
-    map((action: OidcActions.SignInRedirect) => action.payload),
+    map((action: OidcActions.SigninRedirect) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signInRedirect(extraQueryParams).pipe(
         concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
@@ -103,7 +103,7 @@ export class OidcEffects {
           console.log('Effect SignInSilent - Caught error silent renew', error);
           // Something went wrong renewing the access token.
           // Set loading done so the auth guard will resolve.
-          return of(new OidcActions.SilentRenewError(error), new OidcActions.UserDoneLoading());
+          return of(new OidcActions.OnSilentRenewError(error), new OidcActions.UserDoneLoading());
         })
       )
     )
@@ -112,7 +112,7 @@ export class OidcEffects {
   @Effect()
   signOutPopup$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignOutPopup),
-    map((action: OidcActions.SignOutPopup) => action.payload),
+    map((action: OidcActions.SignoutPopup) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signOutPopup(extraQueryParams).pipe(
         concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
@@ -124,7 +124,7 @@ export class OidcEffects {
   @Effect()
   signOutRedirect$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignOutRedirect),
-    map((action: OidcActions.SignOutRedirect) => action.payload),
+    map((action: OidcActions.SignoutRedirect) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signOutRedirect(extraQueryParams).pipe(
         concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action

@@ -1,10 +1,4 @@
-<div class="wrapper">
-  <div (click)="loginPopup()">Sign IN Popup</div>
-  <div (click)="loginRedirect()">Sign IN Redirect</div>
-  <hr>
-  <div (click)="logoutPopup()">Sign OUT Popup</div>
-  <div (click)="logoutRedirect()">Sign OUT Redirect</div>
-</div>
+<app-login></app-login>
 <hr>
 <div>
   <div>token expiring: <span>{{expiring$ | async}}</span></div>
@@ -14,5 +8,5 @@
   <hr>
   identity loading: <span>{{loading$ | async}}</span>
   <hr>
-  <pre>{{identity$ | async |json}}</pre>
+  <span>{{identity$ | async |json}}</span>
 </div>

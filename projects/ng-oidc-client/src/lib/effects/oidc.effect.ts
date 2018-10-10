@@ -4,21 +4,8 @@ import { Action } from '@ngrx/store';
 import { User as OidcUser } from 'oidc-client';
 import { Observable, of } from 'rxjs';
 import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
-import {
-  OidcActionTypes,
-  OidcError,
-  OnUserLoaded,
-  SignInSilent,
-  SilentRenewError,
-  UserDoneLoading,
-  UserFound,
-  SignInPopup,
-  SignInRedirect,
-  SignInError,
-  SignOutPopup,
-  SignOutError,
-  SignOutRedirect
-} from '../actions/oidc.action';
+import { OidcActions } from '../actions';
+
 import { OidcService } from '../services/oidc.service';
 import { ACTION_NO_ACTION } from '../models';
 
@@ -28,101 +15,95 @@ export class OidcEffects {
 
   @Effect()
   getOicdUser$ = this.actions$.pipe(
-    ofType(OidcActionTypes.GetOidcUser),
+    ofType(OidcActions.OidcActionTypes.GetOidcUser),
     tap(() => console.log('Effect getOidcUser  - Getting user from UserManager')),
-    switchMap(() =>
+    concatMap(() =>
       this.oidcService.getOidcUser().pipe(
         tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
-        switchMap((userData: OidcUser) => {
-          let r: Action[] = [];
-          // user does not exist
-          if (userData == null) {
-            return r;
-          }
+        concatMap((userData: OidcUser) => {
+          const r: Action[] = [new OidcActions.UserFound(userData)];
           // user expired, initiate silent sign-in
-          if (userData.expired === true) {
-            r = [...r, new SignInSilent()];
+          if (userData != null && userData.expired === true) {
+            r.push(new OidcActions.SignInSilent());
           }
-
-          r = [...r, new UserFound(userData)];
           return r;
         }),
         catchError(error => {
           console.log('Effect getOidcUser - Caught error get user', error);
-          return of(new UserDoneLoading());
+          return of(new OidcActions.UserDoneLoading());
         })
       )
     )
   );
   @Effect()
   removeOidcUser$ = this.actions$.pipe(
-    ofType(OidcActionTypes.RemoveOidcUser),
+    ofType(OidcActions.OidcActionTypes.RemoveOidcUser),
     tap(() => console.log('Effect removeOidcUser')),
     concatMap(() => {
       return this.oidcService.removeOidcUser().pipe(
-        concatMap(() => [new UserDoneLoading()]),
-        catchError(error => [new OidcError(error)]) //
+        concatMap(() => [new OidcActions.UserDoneLoading()]),
+        catchError(error => [new OidcActions.OidcError(error)]) //
       );
     })
   );
 
   @Effect()
   userFound$ = this.actions$.pipe(
-    ofType(OidcActionTypes.UserFound),
+    ofType(OidcActions.OidcActionTypes.UserFound),
     concatMap(() => {
-      return [new UserDoneLoading()];
+      return [new OidcActions.UserDoneLoading()];
     })
   );
 
   @Effect()
   onUserLoaded$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActionTypes.OnUserLoaded),
-    map((action: OnUserLoaded) => action.payload),
+    ofType(OidcActions.OidcActionTypes.OnUserLoaded),
+    map((action: OidcActions.OnUserLoaded) => action.payload),
     tap((userData: OidcUser) => console.log('Effect onUserLoaded - ', { userData })),
     switchMap((userData: OidcUser) => {
-      return [new UserFound(userData)];
+      return [new OidcActions.UserFound(userData)];
     })
   );
 
   @Effect()
   signInPopup$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActionTypes.SignInPopup),
-    map((action: SignInPopup) => action.payload),
+    ofType(OidcActions.OidcActionTypes.SignInPopup),
+    map((action: OidcActions.SignInPopup) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signInPopup(extraQueryParams).pipe(
         concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new SignInError(error)))
+        catchError(error => of(new OidcActions.SignInError(error)))
       );
     })
   );
 
   @Effect()
   signInRedirect$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActionTypes.SignInRedirect),
-    map((action: SignInRedirect) => action.payload),
+    ofType(OidcActions.OidcActionTypes.SignInRedirect),
+    map((action: OidcActions.SignInRedirect) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signInRedirect(extraQueryParams).pipe(
         concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new SignInError(error)))
+        catchError(error => of(new OidcActions.SignInError(error)))
       );
     })
   );
 
   @Effect()
   signInSilent$ = this.actions$.pipe(
-    ofType(OidcActionTypes.SignInSilent),
+    ofType(OidcActions.OidcActionTypes.SignInSilent),
     tap(() => console.log('Effect SignInSilent - Trigger silent signin manually')),
-    switchMap(() =>
+    concatMap(() =>
       this.oidcService.signInSilent().pipe(
         tap((userData: OidcUser) => console.log('Effect SignInSilent - Got user from silent sign in', userData)),
-        switchMap((userData: OidcUser) => {
-          return [new UserFound(userData)];
+        concatMap((userData: OidcUser) => {
+          return [new OidcActions.UserFound(userData)];
         }),
         catchError(error => {
           console.log('Effect SignInSilent - Caught error silent renew', error);
           // Something went wrong renewing the access token.
           // Set loading done so the auth guard will resolve.
-          return of(new SilentRenewError(error), new UserDoneLoading());
+          return of(new OidcActions.SilentRenewError(error), new OidcActions.UserDoneLoading());
         })
       )
     )
@@ -130,31 +111,31 @@ export class OidcEffects {
 
   @Effect()
   signOutPopup$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActionTypes.SignOutPopup),
-    map((action: SignOutPopup) => action.payload),
+    ofType(OidcActions.OidcActionTypes.SignOutPopup),
+    map((action: OidcActions.SignOutPopup) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signOutPopup(extraQueryParams).pipe(
         concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new SignOutError(error)))
+        catchError(error => of(new OidcActions.SignOutError(error)))
       );
     })
   );
 
   @Effect()
   signOutRedirect$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActionTypes.SignOutRedirect),
-    map((action: SignOutRedirect) => action.payload),
+    ofType(OidcActions.OidcActionTypes.SignOutRedirect),
+    map((action: OidcActions.SignOutRedirect) => action.payload),
     concatMap(extraQueryParams => {
       return this.oidcService.signOutRedirect(extraQueryParams).pipe(
         concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new SignOutError(error)))
+        catchError(error => of(new OidcActions.SignOutError(error)))
       );
     })
   );
 
   @Effect({ dispatch: false })
   onUserSignedOut$ = this.actions$.pipe(
-    ofType(OidcActionTypes.OnUserSignedOut),
+    ofType(OidcActions.OidcActionTypes.OnUserSignedOut),
     tap(() => console.log('Effect OnUserSignedOut'))
   );
 }

@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { User as OidcUser } from 'oidc-client';
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import * as oidcActions from '../actions/oidc.action';
+import { OidcActions } from '../actions';
 import { OidcEvent } from '../models';
 import * as fromOidc from '../reducers/oidc.reducer';
 import { OidcService } from '../services';
@@ -25,7 +25,7 @@ export class OidcFacade {
   // default bindings to events
   private addUserUnLoaded = function() {
     console.log('user loaded');
-    this.store.dispatch(new oidcActions.OnUserUnloaded());
+    this.store.dispatch(new OidcActions.OnUserUnloaded());
   }.bind(this);
 
   private accessTokenExpired = function(e) {
@@ -34,39 +34,39 @@ export class OidcFacade {
 
   private accessTokenExpiring = function() {
     console.log('addAccessTokenExpiring');
-    this.store.dispatch(new oidcActions.UserExpiring());
+    this.store.dispatch(new OidcActions.UserExpiring());
   }.bind(this);
 
   private addSilentRenewError = function(e) {
     console.log('addAccessTokenExpired', e);
     console.log(typeof e);
-    this.store.dispatch(new oidcActions.SilentRenewError(e));
+    this.store.dispatch(new OidcActions.SilentRenewError(e));
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
     console.log('USER LOADED');
-    this.store.dispatch(new oidcActions.OnUserLoaded(loadedUser));
+    this.store.dispatch(new OidcActions.OnUserLoaded(loadedUser));
   }.bind(this);
 
   private addUserSignedOut = function() {
     console.log('USER SIGNED OUT');
     this.oidcService.removeOidcUser();
-    this.store.dispatch(new oidcActions.OnUserSignedOut());
+    this.store.dispatch(new OidcActions.OnUserSignedOut());
   }.bind(this);
 
   private addUserSessionChanged = function(e) {
     console.log('USER SESSION CHANGED', e);
-    this.store.dispatch(new oidcActions.SessionChanged());
+    this.store.dispatch(new OidcActions.SessionChanged());
   };
 
   // OIDC Methods
 
   getOidcUser() {
-    this.store.dispatch(new oidcActions.GetOidcUser());
+    this.store.dispatch(new OidcActions.GetOidcUser());
   }
 
   removeOidcUser() {
-    this.store.dispatch(new oidcActions.RemoveOidcUser());
+    this.store.dispatch(new OidcActions.RemoveOidcUser());
   }
 
   /**
@@ -80,15 +80,15 @@ export class OidcFacade {
   }
 
   signinPopup(extraQueryParams?: any) {
-    this.store.dispatch(new oidcActions.SignInPopup(extraQueryParams));
+    this.store.dispatch(new OidcActions.SignInPopup(extraQueryParams));
   }
 
   signinRedirect(extraQueryParams?: any) {
-    this.store.dispatch(new oidcActions.SignInRedirect(extraQueryParams));
+    this.store.dispatch(new OidcActions.SignInRedirect(extraQueryParams));
   }
 
   signInSilent() {
-    this.store.dispatch(new oidcActions.SignInSilent());
+    this.store.dispatch(new OidcActions.SignInSilent());
   }
 
   signoutPopup(args?: any) {

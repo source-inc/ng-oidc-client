@@ -1,6 +1,6 @@
 import { User as OidcUser } from 'oidc-client';
-import { OidcActionsUnion, OidcActionTypes } from '../actions/oidc.action';
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+import { OidcActions } from '../actions';
 
 export interface OidcState {
   identity: OidcUser | null;
@@ -24,17 +24,17 @@ export const initialState: OidcState = {
   }
 };
 
-export function oidcReducer(state = initialState, action: OidcActionsUnion): OidcState {
+export function oidcReducer(state = initialState, action: OidcActions.OidcActionsUnion): OidcState {
   switch (action.type) {
-    case OidcActionTypes.GetOidcUser:
-    case OidcActionTypes.RemoveOidcUser: {
+    case OidcActions.OidcActionTypes.GetOidcUser:
+    case OidcActions.OidcActionTypes.RemoveOidcUser: {
       return {
         ...state,
         loading: true
       };
     }
 
-    case OidcActionTypes.OnUserLoaded: {
+    case OidcActions.OidcActionTypes.OnUserLoaded: {
       return {
         ...state,
         loading: false,
@@ -42,7 +42,7 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Oid
       };
     }
 
-    case OidcActionTypes.OnUserUnloaded: {
+    case OidcActions.OidcActionTypes.OnUserUnloaded: {
       return {
         ...state,
         identity: null,
@@ -50,28 +50,28 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Oid
       };
     }
 
-    case OidcActionTypes.UserFound: {
+    case OidcActions.OidcActionTypes.UserFound: {
       return {
         ...state,
         identity: action.payload
       };
     }
 
-    case OidcActionTypes.UserLoading: {
+    case OidcActions.OidcActionTypes.UserLoading: {
       return {
         ...state,
         loading: true
       };
     }
 
-    case OidcActionTypes.UserDoneLoading: {
+    case OidcActions.OidcActionTypes.UserDoneLoading: {
       return {
         ...state,
         loading: false
       };
     }
 
-    case OidcActionTypes.UserExpiring: {
+    case OidcActions.OidcActionTypes.UserExpiring: {
       console.log('reducer expiring');
       return {
         ...state,
@@ -79,14 +79,14 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Oid
       };
     }
 
-    case OidcActionTypes.UserExpired: {
+    case OidcActions.OidcActionTypes.UserExpired: {
       return {
         ...state,
         expiring: false
       };
     }
 
-    case OidcActionTypes.SilentRenewError: {
+    case OidcActions.OidcActionTypes.SilentRenewError: {
       return {
         ...state,
         errors: {
@@ -100,7 +100,7 @@ export function oidcReducer(state = initialState, action: OidcActionsUnion): Oid
       };
     }
 
-    case OidcActionTypes.SignInError: {
+    case OidcActions.OidcActionTypes.SignInError: {
       return {
         ...state,
         errors: {
@@ -127,13 +127,10 @@ export const selectOidcState = createFeatureSelector<OidcState>('oidc');
 export const getOidcLoading = createSelector(selectOidcState, (state: OidcState) => state.loading);
 export const getOidcIdentity = createSelector(selectOidcState, (state: OidcState) => state.identity);
 export const isIdentityExpiring = createSelector(selectOidcState, (state: OidcState) => state.expiring);
-
-export const isIdentityExpired = createSelector(getOidcIdentity, (identity: OidcUser) => {
-  if (identity == null) {
-    return false;
-  }
-  return identity.expired;
-});
+export const isIdentityExpired = createSelector(
+  getOidcIdentity,
+  (identity: OidcUser) => identity != null && identity.expired
+);
 
 // errors
 export const selectOidcErrorState: MemoizedSelector<{}, ErrorState> = createSelector(

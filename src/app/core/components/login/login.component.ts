@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {}
 
   loginPopup() {
-    this.oidcFacade.signinPopup();
+    this.oidcFacade.signinPopup({ state: true });
   }
 
   logoutPopup() {
@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   }
 
   loginRedirect() {
-    this.oidcFacade.signinRedirect();
+    this.oidcFacade.signinRedirect({ state: { isPopup: true } });
   }
 
   logoutRedirect() {

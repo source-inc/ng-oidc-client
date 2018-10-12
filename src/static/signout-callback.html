@@ -23,15 +23,31 @@
       Oidc.Log.logger = console;
     }
 
-    var isPopupCallback = JSON.parse(window.localStorage.getItem('ngoidc:isPopupCallback'));
-
-    if (isPopupCallback) {
-      new Oidc.UserManager(config).signoutPopupCallback();
-    } else {
-      new Oidc.UserManager(config).signoutRedirectCallback().then(test => {
-        window.location.href = '/';
-      });
+    // read state from callback fragment
+    var stateId;
+    var fragments = window.location.hash.split('&');
+    for (i = 0; i < fragments.length; i++) {
+      var stateIndex = fragments[i].indexOf('state=');
+      if (stateIndex === 0) {
+        stateId = fragments[i].substring(stateIndex + 'state='.length);
+      }
     }
+    // lookup state in store
+    config.userStore.get(stateId).then(function (state) {
+      state = JSON.parse(state);
+      // either use popup
+      if (state && state.data && state.data.ngOidcClient && state.data.ngOidcClient.isPopup) {
+        new Oidc.UserManager(config).signoutPopupCallback();
+      } else {
+        // or redirect
+        new Oidc.UserManager(config).signoutRedirectCallback().then(t => {
+          window.location.href = '/';
+        });
+      }
+    }, function (error) {
+      console.log(error);
+      // hanlde error
+    });
   </script>
 </body>
 

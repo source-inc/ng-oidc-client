@@ -93,36 +93,23 @@ export class OidcService {
     }
   }
 
-  signInPopup(extraQueryParams?: any): Observable<OidcUser> {
-    this.setCallbackInformation(true);
-    if (extraQueryParams) {
-      const params = {
-        extraQueryParams: extraQueryParams
-      };
-      return from(this.oidcUserManager.signinPopup(params));
-    }
-    return from(this.oidcUserManager.signinPopup());
+  signInPopup(args?: any): Observable<OidcUser> {
+    args = this.setCallbackInformation(args, true);
+    return from(this.oidcUserManager.signinPopup(args));
   }
 
-  signInRedirect(extraQueryParams?: any): Observable<OidcUser> {
-    this.setCallbackInformation(false);
-
-    if (extraQueryParams) {
-      const params = {
-        extraQueryParams: extraQueryParams
-      };
-      return from(this.oidcUserManager.signinRedirect(params));
-    }
-    return from(this.oidcUserManager.signinRedirect());
+  signInRedirect(args?: any): Observable<OidcUser> {
+    args = this.setCallbackInformation(args, false);
+    return from(this.oidcUserManager.signinRedirect(args));
   }
 
   signOutRedirect(args?: any): Observable<any> {
-    this.setCallbackInformation(false);
+    args = this.setCallbackInformation(args, false);
     return from(this.oidcUserManager.signoutRedirect(args));
   }
 
   signOutPopup(args?: any): Observable<any> {
-    this.setCallbackInformation(true);
+    this.setCallbackInformation(args, true);
     return from(this.oidcUserManager.signoutPopup());
   }
 
@@ -154,9 +141,11 @@ export class OidcService {
     return from(this.oidcUserManager.createSignoutRequest(args));
   }
 
-  private setCallbackInformation(isPopupCallback: boolean) {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(StorageKeys.PopupCallback, `${isPopupCallback}`);
-    }
+  private setCallbackInformation(args: any, isPopup: boolean): any {
+    args = args || {};
+    args.data = args.data || {};
+    args.data.ngOidcClient = args.data.ngOidcClient || {};
+    args.data.ngOidcClient.isPopup = args.data.ngOidcClient.isPopup || isPopup;
+    return args;
   }
 }

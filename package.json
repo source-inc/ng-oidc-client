@@ -1,6 +1,6 @@
 {
-  "name": "@fileless/ng-oidc-client-app",
-  "version": "0.0.0",
+  "name": "ng-oidc-client-app",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

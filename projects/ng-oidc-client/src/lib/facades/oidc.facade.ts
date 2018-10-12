@@ -19,6 +19,7 @@ export class OidcFacade {
   loading$: Observable<boolean> = this.store.select(fromOidc.getOidcLoading);
   expiring$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpiring);
   expired$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpired);
+  loggedIn$: Observable<boolean> = this.store.select(fromOidc.isLoggedIn);
   identity$: Observable<OidcUser> = this.store.select(fromOidc.getOidcIdentity);
   errors$: Observable<fromOidc.ErrorState> = this.store.select(fromOidc.selectOidcErrorState);
 
@@ -62,8 +63,8 @@ export class OidcFacade {
 
   // OIDC Methods
 
-  getOidcUser() {
-    this.store.dispatch(new OidcActions.GetOidcUser());
+  getOidcUser(args?: any) {
+    this.store.dispatch(new OidcActions.GetOidcUser(args));
   }
 
   removeOidcUser() {
@@ -80,32 +81,32 @@ export class OidcFacade {
     );
   }
 
-  signinPopup(extraQueryParams?: any) {
-    this.store.dispatch(new OidcActions.SigninPopup(extraQueryParams));
+  signinPopup(args?: any) {
+    this.store.dispatch(new OidcActions.SigninPopup(args));
   }
 
-  signinRedirect(extraQueryParams?: any) {
-    this.store.dispatch(new OidcActions.SigninRedirect(extraQueryParams));
+  signinRedirect(args?: any) {
+    this.store.dispatch(new OidcActions.SigninRedirect(args));
   }
 
-  signinSilent() {
-    this.store.dispatch(new OidcActions.SigninSilent());
+  signinSilent(args?: any) {
+    this.store.dispatch(new OidcActions.SigninSilent(args));
   }
 
-  signoutPopup(extraQueryParams?: any) {
-    this.store.dispatch(new OidcActions.SignoutPopup(extraQueryParams));
+  signoutPopup(args?: any) {
+    this.store.dispatch(new OidcActions.SignoutPopup(args));
   }
 
-  signoutRedirect(extraQueryParams?: any) {
-    this.store.dispatch(new OidcActions.SignoutRedirect(extraQueryParams));
+  signoutRedirect(args?: any) {
+    this.store.dispatch(new OidcActions.SignoutRedirect(args));
   }
 
-  getSigninUtrl(extraQueryParams?: any): Observable<SigninRequest> {
-    return this.oidcService.getSigninUrl(extraQueryParams);
+  getSigninUrl(args?: any): Observable<SigninRequest> {
+    return this.oidcService.getSigninUrl(args);
   }
 
-  getSignoutUrl(extraQueryParams?: any): Observable<SignoutRequest> {
-    return this.oidcService.getSignoutUrl(extraQueryParams);
+  getSignoutUrl(args?: any): Observable<SignoutRequest> {
+    return this.oidcService.getSignoutUrl(args);
   }
 
   registerEvent(event: OidcEvent, callback: (...ev: any[]) => void) {

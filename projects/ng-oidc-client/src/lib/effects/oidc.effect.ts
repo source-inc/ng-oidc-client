@@ -7,24 +7,30 @@ import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import { OidcActions } from '../actions';
 
 import { OidcService } from '../services/oidc.service';
-import { ACTION_NO_ACTION } from '../models';
+import { ACTION_NO_ACTION, OIDC_CONFIG, Config } from '../models';
 
 @Injectable()
 export class OidcEffects {
-  constructor(private actions$: Actions, @Inject(OidcService) private oidcService: OidcService) {}
+  constructor(
+    private actions$: Actions,
+    @Inject(OidcService) private oidcService: OidcService,
+    @Inject(OIDC_CONFIG) private config: Config
+  ) {}
 
   @Effect()
   getOicdUser$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.GetOidcUser),
     tap(() => console.log('Effect getOidcUser  - Getting user from UserManager')),
-    concatMap(() =>
+    map((action: OidcActions.GetOidcUser) => action.payload),
+    concatMap(args =>
       this.oidcService.getOidcUser().pipe(
         tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
         concatMap((userData: OidcUser) => {
           const r: Action[] = [new OidcActions.UserFound(userData)];
-          // user expired, initiate silent sign-in
-          if (userData != null && userData.expired === true) {
-            r.push(new OidcActions.SigninSilent());
+          const automaticSilentRenew = this.config != null && this.config.oidc_config.automaticSilentRenew;
+          // user expired, initiate silent sign-in if configured to automatic
+          if (userData != null && userData.expired === true && automaticSilentRenew === true) {
+            r.push(new OidcActions.SigninSilent(args));
           }
           return r;
         }),
@@ -69,8 +75,8 @@ export class OidcEffects {
   signInPopup$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignInPopup),
     map((action: OidcActions.SigninPopup) => action.payload),
-    concatMap(extraQueryParams => {
-      return this.oidcService.signInPopup(extraQueryParams).pipe(
+    concatMap(args => {
+      return this.oidcService.signInPopup(args).pipe(
         concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
         catchError(error => of(new OidcActions.SignInError(error)))
       );
@@ -81,8 +87,8 @@ export class OidcEffects {
   signInRedirect$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignInRedirect),
     map((action: OidcActions.SigninRedirect) => action.payload),
-    concatMap(extraQueryParams => {
-      return this.oidcService.signInRedirect(extraQueryParams).pipe(
+    concatMap(args => {
+      return this.oidcService.signInRedirect(args).pipe(
         concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
         catchError(error => of(new OidcActions.SignInError(error)))
       );
@@ -93,8 +99,9 @@ export class OidcEffects {
   signInSilent$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignInSilent),
     tap(() => console.log('Effect SignInSilent - Trigger silent signin manually')),
-    concatMap(() =>
-      this.oidcService.signInSilent().pipe(
+    map((action: OidcActions.SigninSilent) => action.payload),
+    concatMap(args => {
+      return this.oidcService.signInSilent(args).pipe(
         tap((userData: OidcUser) => console.log('Effect SignInSilent - Got user from silent sign in', userData)),
         concatMap((userData: OidcUser) => {
           return [new OidcActions.UserFound(userData)];
@@ -105,8 +112,8 @@ export class OidcEffects {
           // Set loading done so the auth guard will resolve.
           return of(new OidcActions.OnSilentRenewError(error), new OidcActions.UserDoneLoading());
         })
-      )
-    )
+      );
+    })
   );
 
   @Effect()

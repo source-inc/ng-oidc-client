@@ -38,6 +38,8 @@ export enum OidcActionTypes {
 
 export class GetOidcUser implements Action {
   readonly type = OidcActionTypes.GetOidcUser;
+
+  constructor(public payload: any) {}
 }
 
 export class RemoveOidcUser implements Action {
@@ -138,6 +140,8 @@ export class SignOutError implements Action {
 
 export class SigninSilent implements Action {
   readonly type = OidcActionTypes.SignInSilent;
+
+  constructor(public payload: any) {}
 }
 
 export class OidcError implements Action {

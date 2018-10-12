@@ -72,7 +72,6 @@ export function oidcReducer(state = initialState, action: OidcActions.OidcAction
     }
 
     case OidcActions.OidcActionTypes.OnAccessTokenExpiring: {
-      console.log('reducer expiring');
       return {
         ...state,
         expiring: true
@@ -130,6 +129,10 @@ export const isIdentityExpiring = createSelector(selectOidcState, (state: OidcSt
 export const isIdentityExpired = createSelector(
   getOidcIdentity,
   (identity: OidcUser) => identity != null && identity.expired
+);
+export const isLoggedIn = createSelector(
+  getOidcIdentity,
+  (identity: OidcUser) => identity != null && identity.expired !== true
 );
 
 // errors

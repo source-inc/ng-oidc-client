@@ -18,7 +18,7 @@ export class OidcService {
     @Inject(OIDC_CONFIG) private config: Config,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    const { log: logSettings, oidc_config: clientSettings } = this.config;
+    const { log: logSettings = null, oidc_config: clientSettings } = this.config;
 
     if (logSettings) {
       Log.level = logSettings.level;
@@ -93,27 +93,14 @@ export class OidcService {
     }
   }
 
-  signInPopup(extraQueryParams?: any): Observable<OidcUser> {
+  signInPopup(args?: any): Observable<OidcUser> {
     this.setCallbackInformation(true);
-    if (extraQueryParams) {
-      const params = {
-        extraQueryParams: extraQueryParams
-      };
-      return from(this.oidcUserManager.signinPopup(params));
-    }
-    return from(this.oidcUserManager.signinPopup());
+    return from(this.oidcUserManager.signinPopup(args));
   }
 
-  signInRedirect(extraQueryParams?: any): Observable<OidcUser> {
+  signInRedirect(args?: any): Observable<OidcUser> {
     this.setCallbackInformation(false);
-
-    if (extraQueryParams) {
-      const params = {
-        extraQueryParams: extraQueryParams
-      };
-      return from(this.oidcUserManager.signinRedirect(params));
-    }
-    return from(this.oidcUserManager.signinRedirect());
+    return from(this.oidcUserManager.signinRedirect(args));
   }
 
   signOutRedirect(args?: any): Observable<any> {
@@ -123,11 +110,11 @@ export class OidcService {
 
   signOutPopup(args?: any): Observable<any> {
     this.setCallbackInformation(true);
-    return from(this.oidcUserManager.signoutPopup());
+    return from(this.oidcUserManager.signoutPopup(args));
   }
 
-  signInSilent(): Observable<OidcUser> {
-    return from(this.oidcUserManager.signinSilent());
+  signInSilent(args?: any): Observable<OidcUser> {
+    return from(this.oidcUserManager.signinSilent(args));
   }
 
   signinPopupCallback(): Observable<any> {

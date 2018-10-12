@@ -14,17 +14,13 @@
 <body>
   <script>
     var Oidc = window.Oidc;
-
     var config = {
       userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
     }
-
     if ((Oidc && Oidc.Log && Oidc.Log.logger)) {
       Oidc.Log.logger = console;
     }
-
     var isPopupCallback = JSON.parse(window.localStorage.getItem('ngoidc:isPopupCallback'));
-
     if (isPopupCallback) {
       new Oidc.UserManager(config).signoutPopupCallback();
     } else {

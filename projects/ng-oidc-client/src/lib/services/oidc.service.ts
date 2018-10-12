@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Log, OidcClient, SigninRequest, SignoutRequest, User as OidcUser, UserManager } from 'oidc-client';
 import { from, Observable } from 'rxjs';
 import { Config, OidcEvent, OIDC_CONFIG, StorageKeys } from '../models';
@@ -9,15 +8,10 @@ import { Config, OidcEvent, OIDC_CONFIG, StorageKeys } from '../models';
   providedIn: 'root'
 })
 export class OidcService {
-  private oidcUserManager: UserManager;
-  private oidcClient: OidcClient;
-  private oidcUser: OidcUser;
+  private _oidcUserManager: UserManager;
+  private _oidcClient: OidcClient;
 
-  constructor(
-    private route: ActivatedRoute,
-    @Inject(OIDC_CONFIG) private config: Config,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
+  constructor(@Inject(OIDC_CONFIG) private config: Config, @Inject(PLATFORM_ID) private platformId: Object) {
     const { log: logSettings = null, oidc_config: clientSettings } = this.config;
 
     if (logSettings) {
@@ -25,40 +19,48 @@ export class OidcService {
       Log.logger = logSettings.logger;
     }
 
-    this.oidcUserManager = new UserManager(clientSettings);
-    this.oidcClient = new OidcClient(clientSettings);
+    this._oidcUserManager = new UserManager(clientSettings);
+    this._oidcClient = new OidcClient(clientSettings);
+  }
+
+  getUserManager(): UserManager {
+    return this._oidcUserManager;
+  }
+
+  getOidcClient(): OidcClient {
+    return this._oidcClient;
   }
 
   getOidcUser(): Observable<OidcUser> {
-    return from(this.oidcUserManager.getUser());
+    return from(this._oidcUserManager.getUser());
   }
 
   removeOidcUser(): Observable<void> {
-    return from(this.oidcUserManager.removeUser());
+    return from(this._oidcUserManager.removeUser());
   }
 
   registerOidcEvent(event: OidcEvent, callback: (...ev: any[]) => void) {
     switch (event) {
       case OidcEvent.AccessTokenExpired:
-        this.oidcUserManager.events.addAccessTokenExpired(callback);
+        this._oidcUserManager.events.addAccessTokenExpired(callback);
         break;
       case OidcEvent.AccessTokenExpiring:
-        this.oidcUserManager.events.addAccessTokenExpiring(callback);
+        this._oidcUserManager.events.addAccessTokenExpiring(callback);
         break;
       case OidcEvent.SilentRenewError:
-        this.oidcUserManager.events.addSilentRenewError(callback);
+        this._oidcUserManager.events.addSilentRenewError(callback);
         break;
       case OidcEvent.UserLoaded:
-        this.oidcUserManager.events.addUserLoaded(callback);
+        this._oidcUserManager.events.addUserLoaded(callback);
         break;
       case OidcEvent.UserSessionChanged:
-        this.oidcUserManager.events.addUserSessionChanged(callback);
+        this._oidcUserManager.events.addUserSessionChanged(callback);
         break;
       case OidcEvent.UserSignedOut:
-        this.oidcUserManager.events.addUserSignedOut(callback);
+        this._oidcUserManager.events.addUserSignedOut(callback);
         break;
       case OidcEvent.UserUnloaded:
-        this.oidcUserManager.events.addUserUnloaded(callback);
+        this._oidcUserManager.events.addUserUnloaded(callback);
         break;
       default:
         break;
@@ -68,25 +70,25 @@ export class OidcService {
   removeOidcEvent(event: OidcEvent, callback: (...ev: any[]) => void) {
     switch (event) {
       case OidcEvent.AccessTokenExpired:
-        this.oidcUserManager.events.removeAccessTokenExpired(callback);
+        this._oidcUserManager.events.removeAccessTokenExpired(callback);
         break;
       case OidcEvent.AccessTokenExpiring:
-        this.oidcUserManager.events.removeAccessTokenExpiring(callback);
+        this._oidcUserManager.events.removeAccessTokenExpiring(callback);
         break;
       case OidcEvent.SilentRenewError:
-        this.oidcUserManager.events.removeSilentRenewError(callback);
+        this._oidcUserManager.events.removeSilentRenewError(callback);
         break;
       case OidcEvent.UserLoaded:
-        this.oidcUserManager.events.removeUserLoaded(callback);
+        this._oidcUserManager.events.removeUserLoaded(callback);
         break;
       case OidcEvent.UserSessionChanged:
-        this.oidcUserManager.events.removeUserSessionChanged(callback);
+        this._oidcUserManager.events.removeUserSessionChanged(callback);
         break;
       case OidcEvent.UserSignedOut:
-        this.oidcUserManager.events.removeUserSignedOut(callback);
+        this._oidcUserManager.events.removeUserSignedOut(callback);
         break;
       case OidcEvent.UserUnloaded:
-        this.oidcUserManager.events.removeUserUnloaded(callback);
+        this._oidcUserManager.events.removeUserUnloaded(callback);
         break;
       default:
         break;
@@ -95,50 +97,50 @@ export class OidcService {
 
   signInPopup(args?: any): Observable<OidcUser> {
     this.setCallbackInformation(true);
-    return from(this.oidcUserManager.signinPopup(args));
+    return from(this._oidcUserManager.signinPopup(args));
   }
 
   signInRedirect(args?: any): Observable<OidcUser> {
     this.setCallbackInformation(false);
-    return from(this.oidcUserManager.signinRedirect(args));
-  }
-
-  signOutRedirect(args?: any): Observable<any> {
-    this.setCallbackInformation(false);
-    return from(this.oidcUserManager.signoutRedirect(args));
+    return from(this._oidcUserManager.signinRedirect(args));
   }
 
   signOutPopup(args?: any): Observable<any> {
     this.setCallbackInformation(true);
-    return from(this.oidcUserManager.signoutPopup(args));
+    return from(this._oidcUserManager.signoutPopup(args));
+  }
+
+  signOutRedirect(args?: any): Observable<any> {
+    this.setCallbackInformation(false);
+    return from(this._oidcUserManager.signoutRedirect(args));
   }
 
   signInSilent(args?: any): Observable<OidcUser> {
-    return from(this.oidcUserManager.signinSilent(args));
+    return from(this._oidcUserManager.signinSilent(args));
   }
 
   signinPopupCallback(): Observable<any> {
-    return from(this.oidcUserManager.signinPopupCallback());
+    return from(this._oidcUserManager.signinPopupCallback());
   }
 
   signinRedirectCallback(): Observable<OidcUser> {
-    return from(this.oidcUserManager.signinRedirectCallback());
+    return from(this._oidcUserManager.signinRedirectCallback());
   }
 
   signoutPopupCallback(): Observable<void> {
-    return from(this.oidcUserManager.signoutPopupCallback());
+    return from(this._oidcUserManager.signoutPopupCallback());
   }
 
   signoutRedirectCallback(): Observable<any> {
-    return from(this.oidcUserManager.signoutRedirectCallback());
+    return from(this._oidcUserManager.signoutRedirectCallback());
   }
 
   getSigninUrl(args?: any): Observable<SigninRequest> {
-    return from(this.oidcUserManager.createSigninRequest(args));
+    return from(this._oidcUserManager.createSigninRequest(args));
   }
 
   getSignoutUrl(args?: any): Observable<SignoutRequest> {
-    return from(this.oidcUserManager.createSignoutRequest(args));
+    return from(this._oidcUserManager.createSignoutRequest(args));
   }
 
   private setCallbackInformation(isPopupCallback: boolean) {

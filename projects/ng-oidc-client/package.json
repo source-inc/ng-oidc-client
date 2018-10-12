@@ -1,16 +1,32 @@
 {
   "name": "ng-oidc-client",
-  "version": "0.0.1",
-  "author": "alex@sourceapp.io, david@sourceapp.io",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "An Angular 6+ package wrapping oidc-client library to manage authentication with OpenID Connect (OIDC) and OAuth2 in a reactive way using NgRx.",
+  "author": "Alexandru Gogan & David Turner",
+  "contributors": [
+    {
+      "name": "Alexandru Gogan",
+      "email": "alexongithub@gmail.com"
+    },
+    {
+      "name": "David Turner",
+      "email": "david@sourceapp.io"
+    }
+  ],
   "repository": {
     "type" : "git",
     "url" : "https://github.com/fileless/ng-oidc-client"
   },
-  "homepage" :"https://fileless.github.io/ng-oidc-client",
-  "keywords" :["Angular","Library","oidc","openid","authentication","identity","sso"],
+  "bugs": {
+    "url": "https://github.com/fileless/ng-oidc-client/issues"
+  },
+  "homepage" :"https://fileless.github.io/ng-oidc-client/",
+  "keywords" :["angular","library","openidconnect","oidc","openid","authentication","identity","sso", "auth", "oauth2","authn","implicit"],
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
   },
+  "typings": "index.d.ts",
   "license": "MIT"
 }

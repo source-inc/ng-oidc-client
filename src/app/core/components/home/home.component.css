@@ -1,3 +1,21 @@
+
+
 .errors {
   color: red;
+}
+
+pre {
+  max-width: 500px;
+  overflow: auto;
+}
+
+.home {
+  display: flex;
+  justify-content: center;
+  margin: 72px 0;
+}
+
+.home-card {
+  max-width: 500px;
+  width: 100%;
 }

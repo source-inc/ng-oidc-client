@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { User } from 'oidc-client';
 import { OidcFacade } from 'ng-oidc-client';
 import { Observable } from 'rxjs';
@@ -6,21 +6,16 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
   title = 'ng-oidc-client-app';
   identity$: Observable<User>;
-  loading$: Observable<boolean>;
-  expiring$: Observable<boolean>;
-  expired$: Observable<boolean>;
-  errors$: Observable<any>;
+  loggedIn$: Observable<boolean>;
 
   constructor(private oidcFacade: OidcFacade) {
-    this.loading$ = this.oidcFacade.loading$;
-    this.expiring$ = this.oidcFacade.expiring$;
-    this.expired$ = this.oidcFacade.expired$;
-    this.errors$ = this.oidcFacade.errors$;
+    this.loggedIn$ = this.oidcFacade.loggedIn$;
     this.identity$ = this.oidcFacade.identity$;
   }
 }

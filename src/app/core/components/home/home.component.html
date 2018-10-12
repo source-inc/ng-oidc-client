@@ -1,12 +1,8 @@
-<app-login></app-login>
-<hr>
-<div>
-  <div>token expiring: <span>{{expiring$ | async}}</span></div>
-  <div>token expired: <span>{{expired$ | async}}</span></div>
-  <hr>
-  errors: <span class="errors">{{errors$ | async | json}}</span>
-  <hr>
-  identity loading: <span>{{loading$ | async}}</span>
-  <hr>
-  <span>{{identity$ | async |json}}</span>
+<div class="home">
+  <mat-card class="home-card">
+    <mat-card-title>Login</mat-card-title>
+    <mat-card-content>
+      <app-login [loggedIn]="loggedIn$ | async" [identity]="identity$ | async"></app-login>
+    </mat-card-content>
+  </mat-card>
 </div>

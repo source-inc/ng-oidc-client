@@ -11,3 +11,22 @@
 a {
   padding: 1rem;
 }
+
+mat-sidenav {
+  width: 350px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.oidc-debug {
+  font-size: 14px;
+  background: #3c3c3c;
+  color: #fff;
+  padding: 20px;
+}
+
+.oidc-debug-container pre {
+  overflow: auto;
+}

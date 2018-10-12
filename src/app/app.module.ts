@@ -15,6 +15,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { OidcInterceptorService } from './core/providers/oidc-interceptor.service';
 import { UserModule } from './modules/user/user.module';
 import { WebStorageStateStore, Log } from 'oidc-client';
+import { MaterialModule } from './material/material.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UnauthorizedComponent } from './core/components/unauthorized/unauthorized.component';
 
 export interface State {
   router: RouterReducerState;
@@ -36,16 +39,17 @@ const routes: Routes = [
     component: ProtectedComponent
   },
   {
-    path: 'login',
-    component: LoginComponent
+    path: 'unauthorized',
+    component: UnauthorizedComponent
   },
   { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
-  declarations: [AppComponent, ProtectedComponent, HomeComponent, LoginComponent],
+  declarations: [AppComponent, ProtectedComponent, HomeComponent, LoginComponent, UnauthorizedComponent],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(routes),
     StoreModule.forRoot(rootStore),
     EffectsModule.forRoot([]),
@@ -75,7 +79,8 @@ const routes: Routes = [
       urls: {
         api: 'https://localhost:5001'
       }
-    })
+    }),
+    MaterialModule
   ],
   providers: [
     OidcGuardService,

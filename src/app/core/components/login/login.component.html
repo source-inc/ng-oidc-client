@@ -1,7 +1,20 @@
 <div class="wrapper">
-  <div (click)="loginPopup()">Sign IN Popup</div>
-  <div (click)="loginRedirect()">Sign IN Redirect</div>
-  <hr>
-  <div (click)="logoutPopup()">Sign OUT Popup</div>
-  <div (click)="logoutRedirect()">Sign OUT Redirect</div>
+        <ng-container *ngIf="loggedIn === false">
+                <p>Sign In:</p>
+                <button color="primary"
+                        class="full-width"
+                        mat-raised-button
+                        (click)="loginPopup()">Popup</button>
+                <button color="primary"
+                        class="full-width"
+                        mat-raised-button
+                        (click)="loginRedirect()">Redirect</button>
+        </ng-container>
+        <ng-container *ngIf="loggedIn === true">
+                <p>You are logged in as:</p>
+                <p><strong>{{identity.profile.name}}</strong> <br /> {{identity.profile.sid}}</p>
+                <button color="primary"
+                        routerLink="/protected"
+                        mat-raised-button>Protected</button>
+        </ng-container>
 </div>

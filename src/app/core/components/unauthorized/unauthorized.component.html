@@ -1,12 +1,11 @@
 <div class="card-wrapper">
     <mat-card class="card">
-        <mat-card-title>Protected Route</mat-card-title>
+        <mat-card-title>Unauthorized</mat-card-title>
         <mat-card-content>
             <button color="primary"
                     class="full-width"
-                    mat-raised-button
-                    (click)="getUser()">Get User</button>
-            <pre>{{user$ | async | json}}</pre>
+                    routerLink="/"
+                    mat-raised-button>Login</button>
         </mat-card-content>
     </mat-card>
 </div>

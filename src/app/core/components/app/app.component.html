@@ -1,6 +1,38 @@
-<nav>
-  <a routerLink="/" routerLinkActive="active">Home</a>
-  <a routerLink="/protected" routerLinkActive="active">Protected</a>
-</nav>
-<hr>
-<router-outlet></router-outlet>
+<div>
+
+  <mat-sidenav-container fullscreen>
+    <mat-sidenav class="oidc-debug"
+                 [mode]="'side'"
+                 [position]="'end'"
+                 [opened]="true">
+      <div class="oidc-debug-container">
+        <p><span>Logged In:</span> <span> {{loggedIn$ | async}}</span></p>
+        <p><span>Identity Loading:</span> <span> {{loading$ | async}}</span></p>
+        <p><span>Token Expiring:</span> <span> {{expiring$ | async}}</span></p>
+        <p><span>Token Expired:</span> <span> {{expired$ | async}}</span></p>
+        <p>Errors:</p>
+        <pre class="errors">{{errors$ | async | json}}</pre>
+        <mat-divider></mat-divider>
+        <p>Identity:</p>
+        <pre>{{identity$ | async | json}}</pre>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-toolbar color="primary">
+        <button routerLink="/"
+                mat-button>Home</button>
+        <button routerLink="/protected"
+                mat-button>Protected</button>
+        <span class="example-spacer"></span>
+        <mat-menu #appMenu="matMenu">
+          <button mat-menu-item (click)="logoutPopup()">Popup</button>
+          <button mat-menu-item (click)="logoutPopup()">Redirect</button>
+        </mat-menu>
+        <button mat-button [matMenuTriggerFor]="appMenu" *ngIf="loggedIn$ | async">
+          Sign Out
+        </button>
+      </mat-toolbar>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

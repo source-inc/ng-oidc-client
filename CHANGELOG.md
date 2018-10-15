@@ -1,0 +1,21 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+
+## [1.0.1] - 2018-10-15
+### Added
+- New configuration `useCallbackFlag?:boolean` to indicate if Popup or Callback should be remembered in local storage
+
+### Fixed
+- Inextensibility error when passing arguments to signinPopup/signinRedirect
+
+## [1.0.0] - 2018-10-12
+### Added
+- First release
+
+[1.0.1]: https://github.com/fileless/ng-oidc-client/compare/v1.0.0...v1.0.1

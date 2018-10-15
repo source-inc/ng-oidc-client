@@ -11,8 +11,14 @@ export class OidcService {
   private _oidcUserManager: UserManager;
   private _oidcClient: OidcClient;
 
+  private _useCallbackFlag = true;
+
   constructor(@Inject(OIDC_CONFIG) private config: Config, @Inject(PLATFORM_ID) private platformId: Object) {
     const { log: logSettings = null, oidc_config: clientSettings } = this.config;
+
+    if (this.config.useCallbackFlag != null) {
+      this._useCallbackFlag = this.config.useCallbackFlag;
+    }
 
     if (logSettings) {
       Log.level = logSettings.level;
@@ -96,27 +102,35 @@ export class OidcService {
   }
 
   signInPopup(args?: any): Observable<OidcUser> {
-    this.setCallbackInformation(true);
-    return from(this._oidcUserManager.signinPopup(args));
+    if (this._useCallbackFlag) {
+      this.setCallbackInformation(true);
+    }
+    return from(this._oidcUserManager.signinPopup({ ...args }));
   }
 
   signInRedirect(args?: any): Observable<OidcUser> {
-    this.setCallbackInformation(false);
-    return from(this._oidcUserManager.signinRedirect(args));
+    if (this._useCallbackFlag) {
+      this.setCallbackInformation(false);
+    }
+    return from(this._oidcUserManager.signinRedirect({ ...args }));
   }
 
   signOutPopup(args?: any): Observable<any> {
-    this.setCallbackInformation(true);
-    return from(this._oidcUserManager.signoutPopup(args));
+    if (this._useCallbackFlag) {
+      this.setCallbackInformation(true);
+    }
+    return from(this._oidcUserManager.signoutPopup({ ...args }));
   }
 
   signOutRedirect(args?: any): Observable<any> {
-    this.setCallbackInformation(false);
-    return from(this._oidcUserManager.signoutRedirect(args));
+    if (this._useCallbackFlag) {
+      this.setCallbackInformation(false);
+    }
+    return from(this._oidcUserManager.signoutRedirect({ ...args }));
   }
 
   signInSilent(args?: any): Observable<OidcUser> {
-    return from(this._oidcUserManager.signinSilent(args));
+    return from(this._oidcUserManager.signinSilent({ ...args }));
   }
 
   signinPopupCallback(): Observable<any> {

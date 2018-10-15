@@ -120,8 +120,8 @@ export class OidcEffects {
   signOutPopup$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignOutPopup),
     map((action: OidcActions.SignoutPopup) => action.payload),
-    concatMap(extraQueryParams => {
-      return this.oidcService.signOutPopup(extraQueryParams).pipe(
+    concatMap(args => {
+      return this.oidcService.signOutPopup(args).pipe(
         concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
         catchError(error => of(new OidcActions.SignOutError(error)))
       );
@@ -132,8 +132,8 @@ export class OidcEffects {
   signOutRedirect$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignOutRedirect),
     map((action: OidcActions.SignoutRedirect) => action.payload),
-    concatMap(extraQueryParams => {
-      return this.oidcService.signOutRedirect(extraQueryParams).pipe(
+    concatMap(args => {
+      return this.oidcService.signOutRedirect(args).pipe(
         concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
         catchError(error => of(new OidcActions.SignOutError(error)))
       );

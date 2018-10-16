@@ -45,6 +45,10 @@ const routes: Routes = [
   { path: '**', redirectTo: '' }
 ];
 
+export function getWebStorageStateStore() {
+  return new WebStorageStateStore({ store: window.localStorage });
+}
+
 @NgModule({
   declarations: [AppComponent, ProtectedComponent, HomeComponent, LoginComponent, UnauthorizedComponent],
   imports: [
@@ -68,11 +72,11 @@ const routes: Routes = [
         silent_redirect_uri: 'http://localhost:4200/renew-callback.html',
         accessTokenExpiringNotificationTime: 10,
         automaticSilentRenew: true,
-        userStore: new WebStorageStateStore({ store: window.localStorage })
+        userStore: getWebStorageStateStore
       },
       log: {
         logger: console,
-        level: Log.DEBUG
+        level: 0
       }
     }),
     UserModule.forRoot({

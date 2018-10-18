@@ -1,5 +1,9 @@
 # NG OIDC Client
 
+[![npm](https://img.shields.io/npm/v/ng-oidc-client.svg)](https://www.npmjs.com/package/ng-oidc-client)
+[![npm](https://img.shields.io/npm/dm/ng-oidc-client.svg)](https://www.npmjs.com/ng-oidc-client)
+[![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
+
 An Angular 6+ package wrapping [oidc-client-js][1] to manage authentication with OIDC and OAuth2 in a reactive way using [NgRx][2].
 
 ![Screenshot of OIDC state in Redux DevTools][screenshot]

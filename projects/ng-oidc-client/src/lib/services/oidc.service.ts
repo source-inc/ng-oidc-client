@@ -28,7 +28,7 @@ export class OidcService {
       Log.level = logSettings.level;
       Log.logger = logSettings.logger;
     }
-    console.log('userstroe', clientSettings.userStore);
+
     if (clientSettings.userStore != null) {
       clientSettings = {
         ...clientSettings,
@@ -165,7 +165,6 @@ export class OidcService {
   }
 
   private setCallbackInformation(isPopupCallback: boolean) {
-    console.log(this._useCallbackFlag);
     // is browser and useCallbackFlag set to true or defaults to true
     if (isPlatformBrowser(this.platformId) && this._useCallbackFlag) {
       localStorage.setItem(StorageKeys.PopupCallback, `${isPopupCallback}`);

@@ -26,7 +26,7 @@
         <span class="example-spacer"></span>
         <mat-menu #appMenu="matMenu">
           <button mat-menu-item (click)="logoutPopup()">Popup</button>
-          <button mat-menu-item (click)="logoutPopup()">Redirect</button>
+          <button mat-menu-item (click)="logoutRedirect()">Redirect</button>
         </mat-menu>
         <button mat-button [matMenuTriggerFor]="appMenu" *ngIf="loggedIn$ | async">
           Sign Out

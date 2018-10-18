@@ -5,9 +5,9 @@ import { User as OidcUser } from 'oidc-client';
 import { Observable, of } from 'rxjs';
 import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import { OidcActions } from '../actions';
-
+import { Config, OIDC_CONFIG } from '../models/config.model';
+import { ACTION_NO_ACTION } from '../models/constants';
 import { OidcService } from '../services/oidc.service';
-import { ACTION_NO_ACTION, OIDC_CONFIG, Config } from '../models';
 
 @Injectable()
 export class OidcEffects {
@@ -27,7 +27,9 @@ export class OidcEffects {
         tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
         concatMap((userData: OidcUser) => {
           const r: Action[] = [new OidcActions.UserFound(userData)];
-          const automaticSilentRenew = this.config != null && this.config.oidc_config.automaticSilentRenew;
+          const automaticSilentRenew =
+            this.config.oidc_config.automaticSilentRenew != null &&
+            this.config.oidc_config.automaticSilentRenew;
           // user expired, initiate silent sign-in if configured to automatic
           if (userData != null && userData.expired === true && automaticSilentRenew === true) {
             r.push(new OidcActions.SigninSilent(args));

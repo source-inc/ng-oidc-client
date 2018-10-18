@@ -1,27 +1,36 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { OidcClient, SigninRequest, SignoutRequest, User as OidcUser, UserManager } from 'oidc-client';
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { OidcActions } from '../actions';
 import { OidcEvent, RequestArugments } from '../models';
-import * as fromOidc from '../reducers/oidc.reducer';
-import { OidcService } from '../services';
+import {
+  OidcState,
+  getOidcLoading,
+  isIdentityExpiring,
+  isIdentityExpired,
+  isLoggedIn,
+  getOidcIdentity,
+  ErrorState,
+  selectOidcErrorState
+} from '../reducers/oidc.reducer';
+import { OidcService } from '../services/oidc.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OidcFacade {
-  constructor(private store: Store<fromOidc.OidcState>, private oidcService: OidcService) {
+  constructor(private store: Store<OidcState>, @Inject(OidcService) private oidcService: OidcService) {
     this.registerDefaultEvents();
   }
 
-  loading$: Observable<boolean> = this.store.select(fromOidc.getOidcLoading);
-  expiring$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpiring);
-  expired$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpired);
-  loggedIn$: Observable<boolean> = this.store.select(fromOidc.isLoggedIn);
-  identity$: Observable<OidcUser> = this.store.select(fromOidc.getOidcIdentity);
-  errors$: Observable<fromOidc.ErrorState> = this.store.select(fromOidc.selectOidcErrorState);
+  loading$: Observable<boolean> = this.store.select(getOidcLoading);
+  expiring$: Observable<boolean> = this.store.select(isIdentityExpiring);
+  expired$: Observable<boolean> = this.store.select(isIdentityExpired);
+  loggedIn$: Observable<boolean> = this.store.select(isLoggedIn);
+  identity$: Observable<OidcUser> = this.store.select(getOidcIdentity);
+  errors$: Observable<ErrorState> = this.store.select(selectOidcErrorState);
 
   // default bindings to events
   private addUserUnLoaded = function() {

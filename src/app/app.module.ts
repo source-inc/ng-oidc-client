@@ -5,7 +5,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { NgOidcClientModule, Config } from 'ng-oidc-client';
+import { NgOidcClientModule } from 'ng-oidc-client';
 import { AppComponent } from './core/components/app/app.component';
 import { HomeComponent } from './core/components/home/home.component';
 import { OidcGuardService } from './core/providers/oidc-guard.service';
@@ -73,11 +73,12 @@ export function getWebStorageStateStore() {
         accessTokenExpiringNotificationTime: 10,
         automaticSilentRenew: true,
         userStore: getWebStorageStateStore
-      },
-      log: {
-        logger: console,
-        level: 0
       }
+      // log: {
+      //   logger: console,
+      //   level: 0
+      // },
+      // useCallbackFlag: true
     }),
     UserModule.forRoot({
       urls: {

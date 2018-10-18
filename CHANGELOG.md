@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2018-10-18
+### Fixed
+- Issue [#2](https://github.com/Fileless/ng-oidc-client/issues/2) to enable builds with `--prod` flag
 
 ## [1.0.1] - 2018-10-15
 ### Added
@@ -18,4 +21,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First release
 
+[1.0.2]: https://github.com/fileless/ng-oidc-client/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/fileless/ng-oidc-client/compare/v1.0.0...v1.0.1

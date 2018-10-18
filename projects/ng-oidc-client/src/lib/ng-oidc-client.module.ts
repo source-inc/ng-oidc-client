@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule, PLATFORM_ID } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { OidcEffects } from './effects/oidc.effect';
 import { OidcFacade } from './facades/oidc.facade';
 import { Config, OIDC_CONFIG } from './models/config.model';
-import { oidcReducer } from './reducers/oidc.reducer';
+import { oidcReducer } from './reducers';
 import { OidcService } from './services/oidc.service';
 
 @NgModule({
@@ -19,8 +19,8 @@ export class NgOidcClientModule {
       ngModule: NgOidcClientModule,
       providers: [
         { provide: OIDC_CONFIG, useValue: config },
-        { provide: OidcService, useClass: OidcService, deps: [OIDC_CONFIG] },
-        { provide: OidcFacade, useClass: OidcFacade, deps: [OidcService] }
+        { provide: OidcService, useClass: OidcService, deps: [OIDC_CONFIG, PLATFORM_ID] },
+        { provide: OidcFacade, useClass: OidcFacade}
       ]
     };
   }

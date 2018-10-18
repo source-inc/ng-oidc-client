@@ -15,15 +15,25 @@ export class OidcService {
   private _useCallbackFlag = true;
 
   constructor(@Inject(OIDC_CONFIG) private config: Config, @Inject(PLATFORM_ID) private platformId: Object) {
-    const { log: logSettings = null, oidc_config: clientSettings } = this.config;
+    const logSettings = this.config.log;
+    let clientSettings = this.config.oidc_config;
 
     if (this.config.useCallbackFlag != null) {
       this._useCallbackFlag = this.config.useCallbackFlag;
+    } else {
+      this._useCallbackFlag = true;
     }
 
     if (logSettings) {
       Log.level = logSettings.level;
       Log.logger = logSettings.logger;
+    }
+    console.log('userstroe', clientSettings.userStore);
+    if (clientSettings.userStore != null) {
+      clientSettings = {
+        ...clientSettings,
+        userStore: clientSettings.userStore()
+      };
     }
 
     this._oidcUserManager = new UserManager(clientSettings);
@@ -103,30 +113,26 @@ export class OidcService {
   }
 
   signInPopup(args?: any): Observable<OidcUser> {
-    if (this._useCallbackFlag) {
-      this.setCallbackInformation(true);
-    }
+    this.setCallbackInformation(true);
+
     return from(this._oidcUserManager.signinPopup({ ...args }));
   }
 
   signInRedirect(args?: any): Observable<OidcUser> {
-    if (this._useCallbackFlag) {
-      this.setCallbackInformation(false);
-    }
+    this.setCallbackInformation(false);
+
     return from(this._oidcUserManager.signinRedirect({ ...args }));
   }
 
   signOutPopup(args?: any): Observable<any> {
-    if (this._useCallbackFlag) {
-      this.setCallbackInformation(true);
-    }
+    this.setCallbackInformation(true);
+
     return from(this._oidcUserManager.signoutPopup({ ...args }));
   }
 
   signOutRedirect(args?: any): Observable<any> {
-    if (this._useCallbackFlag) {
-      this.setCallbackInformation(false);
-    }
+    this.setCallbackInformation(false);
+
     return from(this._oidcUserManager.signoutRedirect({ ...args }));
   }
 
@@ -159,7 +165,9 @@ export class OidcService {
   }
 
   private setCallbackInformation(isPopupCallback: boolean) {
-    if (isPlatformBrowser(this.platformId)) {
+    console.log(this._useCallbackFlag);
+    // is browser and useCallbackFlag set to true or defaults to true
+    if (isPlatformBrowser(this.platformId) && this._useCallbackFlag) {
       localStorage.setItem(StorageKeys.PopupCallback, `${isPopupCallback}`);
     }
   }

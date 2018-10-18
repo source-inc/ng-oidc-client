@@ -5,7 +5,7 @@ import { StoreModule } from '@ngrx/store';
 import { OidcEffects } from './effects/oidc.effect';
 import { OidcFacade } from './facades/oidc.facade';
 import { Config, OIDC_CONFIG } from './models/config.model';
-import { oidcReducer } from './reducers';
+import { oidcReducer } from './reducers/oidc.reducer';
 import { OidcService } from './services/oidc.service';
 
 @NgModule({
@@ -20,7 +20,7 @@ export class NgOidcClientModule {
       providers: [
         { provide: OIDC_CONFIG, useValue: config },
         { provide: OidcService, useClass: OidcService, deps: [OIDC_CONFIG, PLATFORM_ID] },
-        { provide: OidcFacade, useClass: OidcFacade}
+        { provide: OidcFacade, useClass: OidcFacade }
       ]
     };
   }

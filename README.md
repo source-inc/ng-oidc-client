@@ -297,16 +297,18 @@ providers: [
 ```
 
 # Docs
-Coming soon
+You'll find a more detailed [Documentation in our Wiki][5]
 
 # Examples
 Coming soon
 
 # Licence
-This software is licensed under the MIT
+This software is [licensed][6] under the MIT
 
 
 [1]: https://github.com/IdentityModel/oidc-client-js
 [2]: https://github.com/ngrx/platform
 [3]: https://github.com/IdentityModel/oidc-client-js/wiki#configuration
 [4]: https://github.com/Fileless/ng-oidc-client-server
+[5]: https://github.com/Fileless/ng-oidc-client/wiki
+[6]: https://github.com/Fileless/ng-oidc-client/blob/master/LICENSE

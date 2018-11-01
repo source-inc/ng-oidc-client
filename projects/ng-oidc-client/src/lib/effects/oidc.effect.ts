@@ -20,11 +20,11 @@ export class OidcEffects {
   @Effect()
   getOicdUser$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.GetOidcUser),
-    tap(() => console.log('Effect getOidcUser  - Getting user from UserManager')),
+    // tap(() => console.log('Effect getOidcUser  - Getting user from UserManager')),
     map((action: OidcActions.GetOidcUser) => action.payload),
     concatMap(args =>
       this.oidcService.getOidcUser().pipe(
-        tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
+        // tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
         concatMap((userData: OidcUser) => {
           const r: Action[] = [new OidcActions.UserFound(userData)];
           const automaticSilentRenew =
@@ -46,7 +46,7 @@ export class OidcEffects {
   @Effect()
   removeOidcUser$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.RemoveOidcUser),
-    tap(() => console.log('Effect removeOidcUser')),
+    // tap(() => console.log('Effect removeOidcUser')),
     concatMap(() => {
       return this.oidcService.removeOidcUser().pipe(
         concatMap(() => [new OidcActions.UserDoneLoading()]),
@@ -67,7 +67,7 @@ export class OidcEffects {
   onUserLoaded$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.OnUserLoaded),
     map((action: OidcActions.OnUserLoaded) => action.payload),
-    tap((userData: OidcUser) => console.log('Effect onUserLoaded - ', { userData })),
+    // tap((userData: OidcUser) => console.log('Effect onUserLoaded - ', { userData })),
     switchMap((userData: OidcUser) => {
       return [new OidcActions.UserFound(userData)];
     })
@@ -100,11 +100,11 @@ export class OidcEffects {
   @Effect()
   signInSilent$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignInSilent),
-    tap(() => console.log('Effect SignInSilent - Trigger silent signin manually')),
+    // tap(() => console.log('Effect SignInSilent - Trigger silent signin manually')),
     map((action: OidcActions.SigninSilent) => action.payload),
     concatMap(args => {
       return this.oidcService.signInSilent(args).pipe(
-        tap((userData: OidcUser) => console.log('Effect SignInSilent - Got user from silent sign in', userData)),
+        // tap((userData: OidcUser) => console.log('Effect SignInSilent - Got user from silent sign in', userData)),
         concatMap((userData: OidcUser) => {
           return [new OidcActions.UserFound(userData)];
         }),

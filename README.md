@@ -298,6 +298,12 @@ providers: [
 
 # Docs
 You'll find a more detailed [Documentation in our Wiki][5]
+## Articles
+- [Securing your Angular 7+ application with OIDC and NgRx](https://medium.com/@alx_andru/securing-your-angular-7-application-with-oidc-and-ngrx-7775e8325b51)
+  - [Using HttpInterceptor to add a Bearer 🐻 token to API calls with ng-oidc-client](https://medium.com/@alx_andru/using-httpinterceptor-to-add-a-bearer-token-to-api-calls-with-ng-oidc-client-6b088d680e73)
+  - [Route Guards💂 to guard routes with ng-oidc-client](https://medium.com/@alx_andru/route-guards-to-guard-routes-with-ng-oidc-client-6a61e6029424)
+  - [Ready, Set, OidcActions! 🎬](https://medium.com/@alx_andru/ready-set-oidcactions-a14a3f89cb7f)
+
 
 # Examples
 Coming soon

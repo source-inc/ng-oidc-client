@@ -26,8 +26,8 @@ export class OidcGuardService implements CanActivate {
     return this.oidcFacade.identity$.pipe(
       first(),
       switchMap(user => {
-        console.log('Auth Guard - Checking if user exists', user);
-        console.log('Auth Guard - Checking if user is expired:', user && user.expired);
+        // console.log('Auth Guard - Checking if user exists', user);
+        // console.log('Auth Guard - Checking if user is expired:', user && user.expired);
         if (user && !user.expired) {
           return of(true);
         } else {

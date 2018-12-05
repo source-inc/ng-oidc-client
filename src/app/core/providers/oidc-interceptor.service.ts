@@ -12,7 +12,6 @@ export class OidcInterceptorService implements HttpInterceptor {
   constructor(private oidcFacade: OidcFacade) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('intercept');
     return this.oidcFacade.identity$.pipe(
       switchMap(user => {
         if (user && !user.expired && user.access_token) {

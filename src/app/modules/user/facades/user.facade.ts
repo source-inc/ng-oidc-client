@@ -20,7 +20,6 @@ export class UserFacade {
   }
 
   getUserDetails() {
-    console.log('GETTING USER DETAILS');
     this.store.dispatch(new userActions.GetUserMe());
   }
 }

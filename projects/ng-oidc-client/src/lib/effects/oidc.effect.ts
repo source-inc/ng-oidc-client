@@ -20,16 +20,13 @@ export class OidcEffects {
   @Effect()
   getOicdUser$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.GetOidcUser),
-    // tap(() => console.log('Effect getOidcUser  - Getting user from UserManager')),
     map((action: OidcActions.GetOidcUser) => action.payload),
     concatMap(args =>
       this.oidcService.getOidcUser().pipe(
-        // tap(userData => console.log('Effect getOidcUser  - Got User', userData)),
         concatMap((userData: OidcUser) => {
           const r: Action[] = [new OidcActions.UserFound(userData)];
           const automaticSilentRenew =
-            this.config.oidc_config.automaticSilentRenew != null &&
-            this.config.oidc_config.automaticSilentRenew;
+            this.config.oidc_config.automaticSilentRenew != null && this.config.oidc_config.automaticSilentRenew;
           // user expired, initiate silent sign-in if configured to automatic
           if (userData != null && userData.expired === true && automaticSilentRenew === true) {
             r.push(new OidcActions.SigninSilent(args));
@@ -37,7 +34,6 @@ export class OidcEffects {
           return r;
         }),
         catchError(error => {
-          console.log('Effect getOidcUser - Caught error get user', error);
           return of(new OidcActions.UserDoneLoading());
         })
       )
@@ -46,7 +42,6 @@ export class OidcEffects {
   @Effect()
   removeOidcUser$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.RemoveOidcUser),
-    // tap(() => console.log('Effect removeOidcUser')),
     concatMap(() => {
       return this.oidcService.removeOidcUser().pipe(
         concatMap(() => [new OidcActions.UserDoneLoading()]),
@@ -67,7 +62,6 @@ export class OidcEffects {
   onUserLoaded$: Observable<Action> = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.OnUserLoaded),
     map((action: OidcActions.OnUserLoaded) => action.payload),
-    // tap((userData: OidcUser) => console.log('Effect onUserLoaded - ', { userData })),
     switchMap((userData: OidcUser) => {
       return [new OidcActions.UserFound(userData)];
     })
@@ -100,16 +94,13 @@ export class OidcEffects {
   @Effect()
   signInSilent$ = this.actions$.pipe(
     ofType(OidcActions.OidcActionTypes.SignInSilent),
-    // tap(() => console.log('Effect SignInSilent - Trigger silent signin manually')),
     map((action: OidcActions.SigninSilent) => action.payload),
     concatMap(args => {
       return this.oidcService.signInSilent(args).pipe(
-        // tap((userData: OidcUser) => console.log('Effect SignInSilent - Got user from silent sign in', userData)),
         concatMap((userData: OidcUser) => {
           return [new OidcActions.UserFound(userData)];
         }),
         catchError(error => {
-          console.log('Effect SignInSilent - Caught error silent renew', error);
           // Something went wrong renewing the access token.
           // Set loading done so the auth guard will resolve.
           return of(new OidcActions.OnSilentRenewError(error), new OidcActions.UserDoneLoading());
@@ -140,11 +131,5 @@ export class OidcEffects {
         catchError(error => of(new OidcActions.SignOutError(error)))
       );
     })
-  );
-
-  @Effect({ dispatch: false })
-  onUserSignedOut$ = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.OnUserSignedOut),
-    tap(() => console.log('Effect OnUserSignedOut'))
   );
 }

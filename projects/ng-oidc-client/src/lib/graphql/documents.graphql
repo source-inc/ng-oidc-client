@@ -1,0 +1,9 @@
+query identity {
+  identity {
+    ...IdentityFields
+  }
+}
+
+fragment IdentityFields on Identity {
+  id  
+}

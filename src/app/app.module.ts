@@ -1,23 +1,21 @@
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
-import { EffectsModule } from '@ngrx/effects';
+import { LoonaModule } from '@loona/angular';
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
-import { ActionReducerMap, StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ActionReducerMap } from '@ngrx/store';
 import { NgOidcClientModule } from 'ng-oidc-client';
+import { WebStorageStateStore } from 'oidc-client';
 import { AppComponent } from './core/components/app/app.component';
 import { HomeComponent } from './core/components/home/home.component';
-import { OidcGuardService } from './core/providers/oidc-guard.service';
-import { ProtectedComponent } from './core/components/protected/protected.component';
 import { LoginComponent } from './core/components/login/login.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { OidcInterceptorService } from './core/providers/oidc-interceptor.service';
-import { UserModule } from './modules/user/user.module';
-import { WebStorageStateStore, Log } from 'oidc-client';
-import { MaterialModule } from './material/material.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ProtectedComponent } from './core/components/protected/protected.component';
 import { UnauthorizedComponent } from './core/components/unauthorized/unauthorized.component';
+import { OidcGuardService } from './core/providers/oidc-guard.service';
+import { OidcInterceptorService } from './core/providers/oidc-interceptor.service';
+import { MaterialModule } from './material/material.module';
 
 export interface State {
   router: RouterReducerState;
@@ -54,13 +52,9 @@ export function getWebStorageStateStore() {
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     RouterModule.forRoot(routes),
-    StoreModule.forRoot(rootStore),
-    EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({
-      name: 'ng-oidc-client',
-      logOnly: true
-    }),
+    LoonaModule.forRoot(),
     NgOidcClientModule.forRoot({
       oidc_config: {
         authority: 'https:/ng-oidc-client-server.azurewebsites.net',
@@ -79,11 +73,6 @@ export function getWebStorageStateStore() {
       //   level: 0
       // },
       // useCallbackFlag: true
-    }),
-    UserModule.forRoot({
-      urls: {
-        api: 'https://localhost:5001'
-      }
     }),
     MaterialModule
   ],

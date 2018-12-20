@@ -1,0 +1,17 @@
+schema {
+  query: Query
+}
+
+type Query {
+  identity: Identity
+}
+
+
+
+type Identity {
+  id: ID!
+  id_token: String
+  access_token: String
+  
+
+}

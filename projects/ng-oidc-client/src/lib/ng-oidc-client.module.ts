@@ -1,17 +1,51 @@
-import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule, PLATFORM_ID } from '@angular/core';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
-import { OidcEffects } from './effects/oidc.effect';
+import { ModuleWithProviders, PLATFORM_ID, NgModule } from '@angular/core';
+import { LoonaLink, LOONA_CACHE, LoonaModule } from '@loona/angular';
+import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
+import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClientOptions } from 'apollo-client';
+import { ApolloLink } from 'apollo-link';
 import { OidcFacade } from './facades/oidc.facade';
 import { Config, OIDC_CONFIG } from './models/config.model';
-import { oidcReducer } from './reducers/oidc.reducer';
 import { OidcService } from './services/oidc.service';
+import { CommonModule } from '@angular/common';
+
+export function provideApollo(
+  httpLink: HttpLink,
+  loonaLink: LoonaLink,
+  cache: InMemoryCache
+): ApolloClientOptions<any> {
+  const link = ApolloLink.from([loonaLink]);
+
+  return {
+    link: link,
+    cache: cache,
+    connectToDevTools: true
+  };
+}
 
 @NgModule({
-  imports: [CommonModule, StoreModule.forFeature('oidc', oidcReducer), EffectsModule.forFeature([OidcEffects])],
+  imports: [CommonModule, HttpLinkModule, LoonaModule.forChild()],
+  exports: [ApolloModule, HttpLinkModule, LoonaModule],
   declarations: [],
-  providers: [OidcEffects]
+  providers: [
+    {
+      provide: LOONA_CACHE,
+      useFactory() {
+        const cache = new InMemoryCache();
+        // persistCache({
+        //   cache,
+        //   storage: window.localStorage
+        // });
+        return cache;
+      }
+    },
+    {
+      provide: APOLLO_OPTIONS,
+      useFactory: provideApollo,
+      deps: [HttpLink, LoonaLink, LOONA_CACHE]
+    }
+  ]
 })
 export class NgOidcClientModule {
   static forRoot(config: Config): ModuleWithProviders {

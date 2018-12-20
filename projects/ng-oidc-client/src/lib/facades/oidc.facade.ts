@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Loona } from '@loona/angular';
 import { OidcClient, SigninRequest, SignoutRequest, User as OidcUser, UserManager } from 'oidc-client';
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -12,55 +12,55 @@ import { OidcService } from '../services/oidc.service';
   providedIn: 'root'
 })
 export class OidcFacade {
-  constructor(private store: Store<fromOidc.OidcState>, private oidcService: OidcService) {
+  constructor(private loona: Loona, private oidcService: OidcService) {
     this.registerDefaultEvents();
   }
 
-  loading$: Observable<boolean> = this.store.select(fromOidc.getOidcLoading);
-  expiring$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpiring);
-  expired$: Observable<boolean> = this.store.select(fromOidc.isIdentityExpired);
-  loggedIn$: Observable<boolean> = this.store.select(fromOidc.isLoggedIn);
-  identity$: Observable<OidcUser> = this.store.select(fromOidc.getOidcIdentity);
-  errors$: Observable<fromOidc.ErrorState> = this.store.select(fromOidc.selectOidcErrorState);
+  loading$: Observable<boolean> = null; // this.store.select(fromOidc.getOidcLoading);
+  expiring$: Observable<boolean> = null; // this.store.select(fromOidc.isIdentityExpiring);
+  expired$: Observable<boolean> = null; // this.store.select(fromOidc.isIdentityExpired);
+  loggedIn$: Observable<boolean> = null; // this.store.select(fromOidc.isLoggedIn);
+  identity$: Observable<OidcUser> = null; // this.store.select(fromOidc.getOidcIdentity);
+  errors$: Observable<fromOidc.ErrorState> = null; // this.store.select(fromOidc.selectOidcErrorState);
 
   // default bindings to events
   private addUserUnLoaded = function() {
-    this.store.dispatch(new OidcActions.OnUserUnloaded());
+    this.loona.dispatch(new OidcActions.OnUserUnloaded());
   }.bind(this);
 
   private accessTokenExpired = function(e) {
-    this.store.dispatch(new OidcActions.OnAccessTokenExpired());
+    this.loona.dispatch(new OidcActions.OnAccessTokenExpired());
   }.bind(this);
 
   private accessTokenExpiring = function() {
-    this.store.dispatch(new OidcActions.OnAccessTokenExpiring());
+    this.loona.dispatch(new OidcActions.OnAccessTokenExpiring());
   }.bind(this);
 
   private addSilentRenewError = function(e) {
-    this.store.dispatch(new OidcActions.OnSilentRenewError(e));
+    this.loona.dispatch(new OidcActions.OnSilentRenewError(e));
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
-    this.store.dispatch(new OidcActions.OnUserLoaded(loadedUser));
+    this.loona.dispatch(new OidcActions.OnUserLoaded(loadedUser));
   }.bind(this);
 
   private addUserSignedOut = function() {
     this.oidcService.removeOidcUser();
-    this.store.dispatch(new OidcActions.OnUserSignedOut());
+    this.loona.dispatch(new OidcActions.OnUserSignedOut());
   }.bind(this);
 
   private addUserSessionChanged = function(e) {
-    this.store.dispatch(new OidcActions.OnSessionChanged());
+    this.loona.dispatch(new OidcActions.OnSessionChanged());
   };
 
   // OIDC Methods
 
   getOidcUser(args?: any) {
-    this.store.dispatch(new OidcActions.GetOidcUser(args));
+    this.loona.dispatch(new OidcActions.GetOidcUser(args));
   }
 
   removeOidcUser() {
-    this.store.dispatch(new OidcActions.RemoveOidcUser());
+    this.loona.dispatch(new OidcActions.RemoveOidcUser());
   }
 
   getUserManager(): UserManager {
@@ -82,23 +82,23 @@ export class OidcFacade {
   }
 
   signinPopup(args?: RequestArugments) {
-    this.store.dispatch(new OidcActions.SigninPopup(args));
+    this.loona.dispatch(new OidcActions.SigninPopup(args));
   }
 
   signinRedirect(args?: RequestArugments) {
-    this.store.dispatch(new OidcActions.SigninRedirect(args));
+    this.loona.dispatch(new OidcActions.SigninRedirect(args));
   }
 
   signinSilent(args?: RequestArugments) {
-    this.store.dispatch(new OidcActions.SigninSilent(args));
+    this.loona.dispatch(new OidcActions.SigninSilent(args));
   }
 
   signoutPopup(args?: RequestArugments) {
-    this.store.dispatch(new OidcActions.SignoutPopup(args));
+    this.loona.dispatch(new OidcActions.SignoutPopup(args));
   }
 
   signoutRedirect(args?: RequestArugments) {
-    this.store.dispatch(new OidcActions.SignoutRedirect(args));
+    this.loona.dispatch(new OidcActions.SignoutRedirect(args));
   }
 
   getSigninUtrl(args?: RequestArugments): Observable<SigninRequest> {

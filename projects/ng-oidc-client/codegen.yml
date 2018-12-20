@@ -1,0 +1,16 @@
+schema:
+  - ./src/lib/graphql/schema.graphql
+overwrite: true
+config: {}
+generates:
+  ./src/lib/graphql/generated/graphql.ts:
+    documents: ./src/lib/graphql/documents.graphql
+    config:
+      noGraphqlTag: false
+    plugins:
+      - "typescript-common"
+      - "typescript-client"
+      - "typescript-apollo-angular"
+      #- ./packages/plugins/typescript-apollo-angular-loona/dist/index.js
+
+require: []

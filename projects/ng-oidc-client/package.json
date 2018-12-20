@@ -14,19 +14,43 @@
       "email": "daveturner@live.com"
     }
   ],
+  "scripts": {
+    "gen": "gql-gen"
+  },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/fileless/ng-oidc-client"
+    "type": "git",
+    "url": "https://github.com/fileless/ng-oidc-client"
   },
   "bugs": {
     "url": "https://github.com/fileless/ng-oidc-client/issues"
   },
-  "homepage" :"https://fileless.github.io/ng-oidc-client/",
-  "keywords" :["angular","library","openidconnect","oidc","openid","authentication","identity","sso", "auth", "oauth2","authn","implicit"],
+  "homepage": "https://fileless.github.io/ng-oidc-client/",
+  "keywords": [
+    "angular",
+    "library",
+    "openidconnect",
+    "oidc",
+    "openid",
+    "authentication",
+    "identity",
+    "sso",
+    "auth",
+    "oauth2",
+    "authn",
+    "implicit"
+  ],
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
   },
   "typings": "index.d.ts",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "graphql": "^14.0.2",
+    "graphql-code-generator": "^0.15.1",
+    "graphql-codegen-typescript-apollo-angular": "^0.15.1",
+    "graphql-codegen-typescript-client": "^0.15.1",
+    "graphql-codegen-typescript-common": "^0.15.1",
+    "graphql-tag": "^2.10.0"
+  }
 }

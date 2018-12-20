@@ -63,7 +63,7 @@ export function getWebStorageStateStore() {
     }),
     NgOidcClientModule.forRoot({
       oidc_config: {
-        authority: 'https://localhost:5001',
+        authority: 'https:/ng-oidc-client-server.azurewebsites.net',
         client_id: 'ng-oidc-client-identity',
         redirect_uri: 'http://localhost:4200/callback.html',
         response_type: 'id_token token',

@@ -2,26 +2,49 @@ import { Injectable } from '@angular/core';
 import { Loona } from '@loona/angular';
 import { OidcClient, SigninRequest, SignoutRequest, User as OidcUser, UserManager } from 'oidc-client';
 import { Observable } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, take, map, tap } from 'rxjs/operators';
 import { OidcActions } from '../actions';
 import { OidcEvent, RequestArugments } from '../models';
-import * as fromOidc from '../reducers/oidc.reducer';
 import { OidcService } from '../services/oidc.service';
+import { IdentityGQL, NgOidcInfoGQL } from '../graphql/generated/graphql';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OidcFacade {
-  constructor(private loona: Loona, private oidcService: OidcService) {
-    this.registerDefaultEvents();
-  }
-
-  loading$: Observable<boolean> = null; // this.store.select(fromOidc.getOidcLoading);
-  expiring$: Observable<boolean> = null; // this.store.select(fromOidc.isIdentityExpiring);
+  loading$: Observable<boolean>; // this.store.select(fromOidc.getOidcLoading);
+  expiring$: Observable<boolean>; // this.store.select(fromOidc.isIdentityExpiring);
   expired$: Observable<boolean> = null; // this.store.select(fromOidc.isIdentityExpired);
-  loggedIn$: Observable<boolean> = null; // this.store.select(fromOidc.isLoggedIn);
-  identity$: Observable<OidcUser> = null; // this.store.select(fromOidc.getOidcIdentity);
-  errors$: Observable<fromOidc.ErrorState> = null; // this.store.select(fromOidc.selectOidcErrorState);
+  loggedIn$: Observable<boolean>; // this.store.select(fromOidc.isLoggedIn);
+  // identity$: Observable<OidcUser> = null; // this.store.select(fromOidc.getOidcIdentity);
+  identity$: Observable<any>;
+  // errors$: Observable<fromOidc.ErrorState> = null; // this.store.select(fromOidc.selectOidcErrorState);
+
+  constructor(
+    private loona: Loona,
+    private oidcService: OidcService,
+    private identityGQL: IdentityGQL,
+    private ngOidcInfoGQL: NgOidcInfoGQL
+  ) {
+    this.registerDefaultEvents();
+
+    const queryRefIdentity = this.loona.query<any>(this.identityGQL.document);
+    const queryRefInfo = this.loona.query<any>(this.ngOidcInfoGQL.document);
+
+    this.identity$ = queryRefIdentity.valueChanges.pipe(
+      // tap(query => console.log({ query })),
+      map(query => query.data.identity)
+    );
+
+    this.loading$ = queryRefIdentity.valueChanges.pipe(map(query => query.loading));
+
+    this.loggedIn$ = queryRefIdentity.valueChanges.pipe(map(query => query.data.identity != null));
+
+    this.expiring$ = queryRefInfo.valueChanges.pipe(
+      tap(x => console.log(x)),
+      map(query => query.data.expiring)
+    );
+  }
 
   // default bindings to events
   private addUserUnLoaded = function() {
@@ -33,6 +56,7 @@ export class OidcFacade {
   }.bind(this);
 
   private accessTokenExpiring = function() {
+    console.log('access token expiring');
     this.loona.dispatch(new OidcActions.OnAccessTokenExpiring());
   }.bind(this);
 
@@ -41,7 +65,8 @@ export class OidcFacade {
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
-    this.loona.dispatch(new OidcActions.OnUserLoaded(loadedUser));
+    // this.loona.dispatch(new OidcActions.OnUserLoaded(loadedUser));
+    this.loona.dispatch(new OidcActions.UserFound(loadedUser));
   }.bind(this);
 
   private addUserSignedOut = function() {
@@ -82,7 +107,8 @@ export class OidcFacade {
   }
 
   signinPopup(args?: RequestArugments) {
-    this.loona.dispatch(new OidcActions.SigninPopup(args));
+    // this.loona.dispatch(new OidcActions.SigninPopup(args));
+    this.oidcService.signInPopup(args).pipe(tap(identity => console.log(identity)));
   }
 
   signinRedirect(args?: RequestArugments) {

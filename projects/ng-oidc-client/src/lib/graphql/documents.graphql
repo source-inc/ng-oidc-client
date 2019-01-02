@@ -1,9 +1,37 @@
+fragment IdentityFields on Identity {
+  id_token
+  access_token
+  profile {
+    name
+    sid
+  }
+}
+
+fragment NgOidcInfoFields on NgOidcInfo {
+  expiring
+  loading
+}
+
 query identity {
-  identity {
+  identity @client {
     ...IdentityFields
   }
 }
 
-fragment IdentityFields on Identity {
-  id  
+mutation addIdentity($id_token: String!, $access_token: String!, $profile: ProfileInput) {
+  addIdentity(id_token: $id_token, access_token: $access_token, profile: $profile) @client {
+    ...IdentityFields
+  }
+}
+
+mutation updateNgOidcInfo($info: NgOidcInfoInput) {
+  updateNgOidcInfo(info: $info) @client {
+    ...NgOidcInfoFields
+  }
+}
+
+query ngOidcInfo {
+  ngOidcInfo @client {
+    ...NgOidcInfoFields
+  }
 }

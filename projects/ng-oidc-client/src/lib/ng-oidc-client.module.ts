@@ -9,6 +9,7 @@ import { OidcFacade } from './facades/oidc.facade';
 import { Config, OIDC_CONFIG } from './models/config.model';
 import { OidcService } from './services/oidc.service';
 import { CommonModule } from '@angular/common';
+import { OidcState } from './loona/oidc.state';
 
 export function provideApollo(
   httpLink: HttpLink,
@@ -25,7 +26,7 @@ export function provideApollo(
 }
 
 @NgModule({
-  imports: [CommonModule, HttpLinkModule, LoonaModule.forChild()],
+  imports: [CommonModule, HttpLinkModule, LoonaModule.forChild([OidcState])],
   exports: [ApolloModule, HttpLinkModule, LoonaModule],
   declarations: [],
   providers: [

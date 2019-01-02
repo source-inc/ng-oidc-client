@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
     this.expiring$ = this.oidcFacade.expiring$;
     this.expired$ = this.oidcFacade.expired$;
     this.loggedIn$ = this.oidcFacade.loggedIn$;
-    this.errors$ = this.oidcFacade.errors$;
+    // this.errors$ = this.oidcFacade.errors$;
     this.identity$ = this.oidcFacade.identity$;
   }
 

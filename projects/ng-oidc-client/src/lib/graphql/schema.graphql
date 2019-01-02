@@ -2,16 +2,40 @@ schema {
   query: Query
 }
 
-type Query {
-  identity: Identity
+type Profile {
+  name: String
+  sid: String
 }
 
+input ProfileInput {
+  name:String
+  sid: String
+}
 
+type NgOidcInfo {
+  expiring: Boolean
+  loading: Boolean
+}
+
+input NgOidcInfoInput {
+  expiring: Boolean
+  loading: Boolean
+}
 
 type Identity {
-  id: ID!
   id_token: String
   access_token: String
-  
-
+  profile: Profile
 }
+
+type Query {
+  identity: Identity
+  ngOidcInfo: NgOidcInfo
+}
+
+type Mutation {
+  addIdentity(id_token:String, access_token: String, profile:ProfileInput):Identity
+  updateNgOidcInfo(info:NgOidcInfoInput):NgOidcInfo
+}
+
+

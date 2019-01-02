@@ -1,5 +1,5 @@
-import { Action } from '@ngrx/store';
 import { User as OidcUser, User } from 'oidc-client';
+import { AddIdentityGQL, IdentityFields, UpdateNgOidcInfoGQL } from '../graphql/generated/graphql';
 
 export enum OidcActionTypes {
   GetOidcUser = '[Oidc] get oidc user',
@@ -36,115 +36,127 @@ export enum OidcActionTypes {
 
 // OIDC COMMANDS
 
-export class GetOidcUser implements Action {
+export class GetOidcUser {
   readonly type = OidcActionTypes.GetOidcUser;
 
   constructor(public payload: any) {}
 }
 
-export class RemoveOidcUser implements Action {
+export class RemoveOidcUser {
   readonly type = OidcActionTypes.RemoveOidcUser;
 }
 
-export class UserExpired implements Action {
+export class UserExpired {
   readonly type = OidcActionTypes.UserExpired;
 }
 
-export class UserFound implements Action {
+export class UserFound {
+  static mutation = new AddIdentityGQL(null).document;
   readonly type = OidcActionTypes.UserFound;
+  variables: any;
 
-  constructor(public payload: OidcUser) {}
+  constructor(public payload: OidcUser) {
+    this.variables = {
+      id_token: payload.id_token,
+      access_token: payload.access_token,
+      profile: {
+        name: payload.profile.name,
+        sid: payload.profile.sid
+      }
+    };
+  }
 }
 
-export class OnSessionChanged implements Action {
+export class OnSessionChanged {
   readonly type = OidcActionTypes.OnSessionChanged;
 }
 
-export class OnAccessTokenExpired implements Action {
+export class OnAccessTokenExpired {
   readonly type = OidcActionTypes.OnAccessTokenExpired;
 }
 
-export class OnAccessTokenExpiring implements Action {
+export class OnAccessTokenExpiring {
+  static mutation = new UpdateNgOidcInfoGQL(null).document;
   readonly type = OidcActionTypes.OnAccessTokenExpiring;
 }
 
-export class OnUserLoading implements Action {
+export class OnUserLoading {
   readonly type = OidcActionTypes.UserLoading;
 }
 
-export class UserDoneLoading implements Action {
+export class UserDoneLoading {
   readonly type = OidcActionTypes.UserDoneLoading;
 }
 
-export class UserLoadingError implements Action {
+export class UserLoadingError {
   readonly type = OidcActionTypes.UserLoadingError;
 }
 
 // OIDC EVENTS
 
-export class OnUserLoaded implements Action {
+export class OnUserLoaded {
   readonly type = OidcActionTypes.OnUserLoaded;
 
   constructor(public payload: OidcUser) {}
 }
 
-export class OnUserUnloaded implements Action {
+export class OnUserUnloaded {
   readonly type = OidcActionTypes.OnUserUnloaded;
 }
 
-export class OnUserSignedOut implements Action {
+export class OnUserSignedOut {
   readonly type = OidcActionTypes.OnUserSignedOut;
 }
 
-export class OnSilentRenewError implements Action {
+export class OnSilentRenewError {
   readonly type = OidcActionTypes.OnSilentRenewError;
 
   constructor(public payload: Error) {}
 }
 
-export class SigninPopup implements Action {
+export class SigninPopup {
   readonly type = OidcActionTypes.SignInPopup;
 
   constructor(public payload: any) {}
 }
 
-export class SigninRedirect implements Action {
+export class SigninRedirect {
   readonly type = OidcActionTypes.SignInRedirect;
 
   constructor(public payload: any) {}
 }
 
-export class SignInError implements Action {
+export class SignInError {
   readonly type = OidcActionTypes.SignInError;
 
   constructor(public payload: Error) {}
 }
 
-export class SignoutPopup implements Action {
+export class SignoutPopup {
   readonly type = OidcActionTypes.SignOutPopup;
 
   constructor(public payload: any) {}
 }
 
-export class SignoutRedirect implements Action {
+export class SignoutRedirect {
   readonly type = OidcActionTypes.SignOutRedirect;
 
   constructor(public payload: any) {}
 }
 
-export class SignOutError implements Action {
+export class SignOutError {
   readonly type = OidcActionTypes.SignOutError;
 
   constructor(public payload: Error) {}
 }
 
-export class SigninSilent implements Action {
+export class SigninSilent {
   readonly type = OidcActionTypes.SignInSilent;
 
   constructor(public payload: any) {}
 }
 
-export class OidcError implements Action {
+export class OidcError {
   readonly type = OidcActionTypes.OidcError;
   constructor(public payload: any) {}
 }

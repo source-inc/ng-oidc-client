@@ -4,8 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { LoonaModule } from '@loona/angular';
-import { routerReducer, RouterReducerState } from '@ngrx/router-store';
-import { ActionReducerMap } from '@ngrx/store';
 import { NgOidcClientModule } from 'ng-oidc-client';
 import { WebStorageStateStore } from 'oidc-client';
 import { AppComponent } from './core/components/app/app.component';
@@ -16,14 +14,6 @@ import { UnauthorizedComponent } from './core/components/unauthorized/unauthoriz
 import { OidcGuardService } from './core/providers/oidc-guard.service';
 import { OidcInterceptorService } from './core/providers/oidc-interceptor.service';
 import { MaterialModule } from './material/material.module';
-
-export interface State {
-  router: RouterReducerState;
-}
-
-export const rootStore: ActionReducerMap<State> = {
-  router: routerReducer
-};
 
 const routes: Routes = [
   {
@@ -57,7 +47,7 @@ export function getWebStorageStateStore() {
     LoonaModule.forRoot(),
     NgOidcClientModule.forRoot({
       oidc_config: {
-        authority: 'https:/ng-oidc-client-server.azurewebsites.net',
+        authority: 'https:/localhost:5001',
         client_id: 'ng-oidc-client-identity',
         redirect_uri: 'http://localhost:4200/callback.html',
         response_type: 'id_token token',

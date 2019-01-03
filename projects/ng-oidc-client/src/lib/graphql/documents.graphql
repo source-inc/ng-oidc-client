@@ -1,9 +1,11 @@
 fragment IdentityFields on Identity {
   id_token
   access_token
+  expired
+  expires_in
   profile {
     name
-    sid
+    sid        
   }
 }
 
@@ -18,8 +20,8 @@ query identity {
   }
 }
 
-mutation addIdentity($id_token: String!, $access_token: String!, $profile: ProfileInput) {
-  addIdentity(id_token: $id_token, access_token: $access_token, profile: $profile) @client {
+mutation addIdentity($identity: IdentityInput) {
+  addIdentity(identity: $identity) @client {
     ...IdentityFields
   }
 }

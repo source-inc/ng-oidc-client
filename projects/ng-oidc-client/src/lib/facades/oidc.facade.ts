@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Loona } from '@loona/angular';
 import { OidcClient, SigninRequest, SignoutRequest, User as OidcUser, UserManager } from 'oidc-client';
 import { Observable } from 'rxjs';
-import { filter, take, map, tap } from 'rxjs/operators';
+import { filter, take, map, tap, pluck } from 'rxjs/operators';
 import { OidcActions } from '../actions';
 import { OidcEvent, RequestArugments } from '../models';
 import { OidcService } from '../services/oidc.service';
@@ -14,7 +14,7 @@ import { IdentityGQL, NgOidcInfoGQL } from '../graphql/generated/graphql';
 export class OidcFacade {
   loading$: Observable<boolean>; // this.store.select(fromOidc.getOidcLoading);
   expiring$: Observable<boolean>; // this.store.select(fromOidc.isIdentityExpiring);
-  expired$: Observable<boolean> = null; // this.store.select(fromOidc.isIdentityExpired);
+  expired$: Observable<boolean>; // this.store.select(fromOidc.isIdentityExpired);
   loggedIn$: Observable<boolean>; // this.store.select(fromOidc.isLoggedIn);
   // identity$: Observable<OidcUser> = null; // this.store.select(fromOidc.getOidcIdentity);
   identity$: Observable<any>;
@@ -31,56 +31,63 @@ export class OidcFacade {
     const queryRefIdentity = this.loona.query<any>(this.identityGQL.document);
     const queryRefInfo = this.loona.query<any>(this.ngOidcInfoGQL.document);
 
-    this.identity$ = queryRefIdentity.valueChanges.pipe(
-      // tap(query => console.log({ query })),
-      map(query => query.data.identity)
-    );
-
-    this.loading$ = queryRefIdentity.valueChanges.pipe(map(query => query.loading));
-
+    this.loading$ = queryRefIdentity.valueChanges.pipe(pluck('loading'));
     this.loggedIn$ = queryRefIdentity.valueChanges.pipe(map(query => query.data.identity != null));
-
-    this.expiring$ = queryRefInfo.valueChanges.pipe(
-      tap(x => console.log(x)),
-      map(query => query.data.expiring)
-    );
+    this.identity$ = queryRefIdentity.valueChanges.pipe(pluck('data', 'identity'));
+    this.expiring$ = queryRefInfo.valueChanges.pipe(pluck('data', 'ngOidcInfo', 'expiring'));
+    this.expired$ = this.identity$.pipe(map(identity => (identity && identity.expired) || false));
   }
 
   // default bindings to events
   private addUserUnLoaded = function() {
+    console.log('unloaded');
     this.loona.dispatch(new OidcActions.OnUserUnloaded());
   }.bind(this);
 
-  private accessTokenExpired = function(e) {
-    this.loona.dispatch(new OidcActions.OnAccessTokenExpired());
+  private accessTokenExpired = async function() {
+    // if current user exists, pass to action
+    const user: OidcUser = await this.identity$
+      .pipe(
+        filter(identity => identity != null),
+        take(1)
+      )
+      .toPromise();
+
+    this.loona.dispatch(new OidcActions.OnAccessTokenExpired(user));
   }.bind(this);
 
   private accessTokenExpiring = function() {
     console.log('access token expiring');
-    this.loona.dispatch(new OidcActions.OnAccessTokenExpiring());
+    this.loona.dispatch(new OidcActions.OnAccessTokenExpiring(true));
   }.bind(this);
 
   private addSilentRenewError = function(e) {
+    console.log('renewerror');
     this.loona.dispatch(new OidcActions.OnSilentRenewError(e));
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
+    console.log('loaded');
     // this.loona.dispatch(new OidcActions.OnUserLoaded(loadedUser));
     this.loona.dispatch(new OidcActions.UserFound(loadedUser));
+    this.loona.dispatch(new OidcActions.OnAccessTokenExpiring(false));
   }.bind(this);
 
   private addUserSignedOut = function() {
+    console.log('signedOut');
     this.oidcService.removeOidcUser();
     this.loona.dispatch(new OidcActions.OnUserSignedOut());
   }.bind(this);
 
   private addUserSessionChanged = function(e) {
+    console.log('sessionchanged');
     this.loona.dispatch(new OidcActions.OnSessionChanged());
   };
 
   // OIDC Methods
 
   getOidcUser(args?: any) {
+    console.log('getOidcUser');
     this.loona.dispatch(new OidcActions.GetOidcUser(args));
   }
 

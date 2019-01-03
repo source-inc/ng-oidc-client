@@ -3,13 +3,21 @@ schema {
 }
 
 type Profile {
-  name: String
   sid: String
+  sub: String
+  auth_time: Int
+  idp: String
+  amr: [String]  
+  name: String  
 }
 
 input ProfileInput {
-  name:String
-  sid: String
+ sid: String
+  sub: String
+  auth_time: Int
+  idp: String
+  amr: [String]  
+  name: String  
 }
 
 type NgOidcInfo {
@@ -24,8 +32,26 @@ input NgOidcInfoInput {
 
 type Identity {
   id_token: String
-  access_token: String
   profile: Profile
+  session_state: String
+  access_token: String
+  token_type: String
+  scope: [String]
+  expires_at: Int
+  expires_in: Int
+  expired: Boolean
+}
+
+input IdentityInput {
+  id_token: String
+  profile: ProfileInput
+  session_state: String
+  access_token: String
+  token_type: String
+  scope: [String]
+  expires_at: Int
+  expires_in: Int
+  expired: Boolean
 }
 
 type Query {
@@ -34,7 +60,7 @@ type Query {
 }
 
 type Mutation {
-  addIdentity(id_token:String, access_token: String, profile:ProfileInput):Identity
+  addIdentity(identity:IdentityInput):Identity
   updateNgOidcInfo(info:NgOidcInfoInput):NgOidcInfo
 }
 

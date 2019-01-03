@@ -8,7 +8,7 @@
       <div class="oidc-debug-container">
         <p><span>Logged In:</span> <span> {{loggedIn$ | async}}</span></p>
         <p><span>Identity Loading:</span> <span> {{loading$ | async}}</span></p>
-        <p><span>Token Expiring:</span> <span> {{expiring$ | async}}</span></p>
+        <p><span>Token Expiring:</span> <span> {{expiring$ | async | json}}</span></p>
         <p><span>Token Expired:</span> <span> {{expired$ | async}}</span></p>
         <!-- <p>Errors:</p>
         <pre class="errors">{{errors$ | async | json}}</pre> -->

@@ -1,9 +1,37 @@
 export type Maybe<T> = T | null;
 
-export interface ProfileInput {
-  name?: Maybe<string>;
+export interface IdentityInput {
+  id_token?: Maybe<string>;
 
+  profile?: Maybe<ProfileInput>;
+
+  session_state?: Maybe<string>;
+
+  access_token?: Maybe<string>;
+
+  token_type?: Maybe<string>;
+
+  scope?: Maybe<(Maybe<string>)[]>;
+
+  expires_at?: Maybe<number>;
+
+  expires_in?: Maybe<number>;
+
+  expired?: Maybe<boolean>;
+}
+
+export interface ProfileInput {
   sid?: Maybe<string>;
+
+  sub?: Maybe<string>;
+
+  auth_time?: Maybe<number>;
+
+  idp?: Maybe<string>;
+
+  amr?: Maybe<(Maybe<string>)[]>;
+
+  name?: Maybe<string>;
 }
 
 export interface NgOidcInfoInput {
@@ -30,9 +58,7 @@ export namespace Identity {
 
 export namespace AddIdentity {
   export type Variables = {
-    id_token: string;
-    access_token: string;
-    profile?: Maybe<ProfileInput>;
+    identity?: Maybe<IdentityInput>;
   };
 
   export type Mutation = {
@@ -78,6 +104,10 @@ export namespace IdentityFields {
 
     access_token: Maybe<string>;
 
+    expired: Maybe<boolean>;
+
+    expires_in: Maybe<number>;
+
     profile: Maybe<Profile>;
   };
 
@@ -117,6 +147,8 @@ export const IdentityFieldsFragment = gql`
   fragment IdentityFields on Identity {
     id_token
     access_token
+    expired
+    expires_in
     profile {
       name
       sid
@@ -154,8 +186,8 @@ export class IdentityGQL extends Apollo.Query<Identity.Query, Identity.Variables
 })
 export class AddIdentityGQL extends Apollo.Mutation<AddIdentity.Mutation, AddIdentity.Variables> {
   document: any = gql`
-    mutation addIdentity($id_token: String!, $access_token: String!, $profile: ProfileInput) {
-      addIdentity(id_token: $id_token, access_token: $access_token, profile: $profile) @client {
+    mutation addIdentity($identity: IdentityInput) {
+      addIdentity(identity: $identity) @client {
         ...IdentityFields
       }
     }

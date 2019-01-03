@@ -1,56 +1,54 @@
-import { Loona, State, Update, Mutation, Context } from '@loona/angular';
+import { Context, Effect, Mutation, State, Update } from '@loona/angular';
 import { OidcActions } from '../actions/index';
-import { IdentityGQL, UpdateNgOidcInfoGQL, NgOidcInfoGQL } from '../graphql/generated/graphql';
-import { OnAccessTokenExpiring } from '../actions/oidc.action';
+import { IdentityGQL, NgOidcInfoGQL } from '../graphql/generated/graphql';
 
 @State({
   defaults: {
     identity: null,
     ngOidcInfo: {
       __typename: 'NgOidcInfo',
-      expiring: true,
+      expiring: false,
       loading: false
     }
   }
 })
 export class OidcState {
-  constructor(private loona: Loona, private identityGQL: IdentityGQL, private ngOidcInfoGQL: NgOidcInfoGQL) {}
+  constructor(private identityGQL: IdentityGQL, private ngOidcInfoGQL: NgOidcInfoGQL) {}
 
   @Mutation(OidcActions.UserFound)
-  onUserFound(identity, ctx: Context) {
-    identity.__typename = 'Identity';
-    identity.profile.__typename = 'Profile';
-    return identity;
+  onUserFound(args, ctx: Context) {
+    console.log({ identity: args });
+    args.identity.__typename = 'Identity';
+    args.identity.profile.__typename = 'Profile';
+    return args.identity;
   }
 
   @Update(OidcActions.UserFound)
   updateIdentity(mutation, ctx: Context) {
+    console.log(`@Update OidcActions.UserFound`, mutation);
     ctx.patchQuery(this.identityGQL.document, state => {
       state.identity = mutation.result;
     });
   }
 
   @Mutation(OidcActions.OnAccessTokenExpiring)
-  onAccessTokenExpiring(mutation, ctx: Context) {
-    console.log('@Mutation onAccessTokenExpiring', mutation);
-    mutation.__typename = 'NgOidcInfo';
-    mutation.expiring = true;
-    mutation.loading = null;
-    return mutation;
+  onAccessTokenExpiring(args, ctx: Context) {
+    args.info.__typename = 'NgOidcInfo';
+    return args.info;
   }
 
   @Update(OidcActions.OnAccessTokenExpiring)
-  updateAccessTokenExpiring(_, ctx: Context) {
-    console.log('@Update onAccessTokenExpiring');
+  updateAccessTokenExpiring(mutation, ctx: Context) {
     ctx.patchQuery(this.ngOidcInfoGQL.document, state => {
-      if (state.ngOidcInfo == null) {
-        state.ngOidcInfo = {
-          __typename: 'NgOidcInfo',
-          expiring: true,
-          loading: false
-        };
-      }
-      state.ngOidcInfo.expiring = true;
+      state.ngOidcInfo = mutation.result;
+    });
+  }
+
+  @Effect(OidcActions.OnAccessTokenExpired)
+  updateAccessTokenExpired(effect, ctx: Context) {
+    ctx.patchQuery(this.identityGQL.document, state => {
+      state.identity = effect.payload;
+      state.identity.expired = true;
     });
   }
 }

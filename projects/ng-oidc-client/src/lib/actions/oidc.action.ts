@@ -56,12 +56,12 @@ export class UserFound {
   variables: any;
 
   constructor(public payload: OidcUser) {
+    console.log({ payload });
     this.variables = {
-      id_token: payload.id_token,
-      access_token: payload.access_token,
-      profile: {
-        name: payload.profile.name,
-        sid: payload.profile.sid
+      identity: {
+        ...payload,
+        expired: payload.expired,
+        expires_in: payload.expires_in
       }
     };
   }
@@ -72,12 +72,22 @@ export class OnSessionChanged {
 }
 
 export class OnAccessTokenExpired {
-  readonly type = OidcActionTypes.OnAccessTokenExpired;
+  static type = OidcActionTypes.OnAccessTokenExpired;
+  constructor(public payload: OidcUser) {}
 }
 
 export class OnAccessTokenExpiring {
   static mutation = new UpdateNgOidcInfoGQL(null).document;
   readonly type = OidcActionTypes.OnAccessTokenExpiring;
+  variables: any;
+  constructor(public payload: boolean) {
+    this.variables = {
+      info: {
+        expiring: payload,
+        loading: null
+      }
+    };
+  }
 }
 
 export class OnUserLoading {

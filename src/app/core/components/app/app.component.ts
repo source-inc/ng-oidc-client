@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { OidcFacade } from 'ng-oidc-client';
 import { User } from 'oidc-client';
 import { Observable } from 'rxjs';
+import { Identity } from 'projects/ng-oidc-client/src/lib/graphql/generated/graphql';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit {
   title = 'ng-oidc-client-app';
-  identity$: Observable<User>;
+  identity$: Observable<Identity.Identity>;
   loading$: Observable<boolean>;
   expiring$: Observable<boolean>;
   expired$: Observable<boolean>;
@@ -23,7 +24,7 @@ export class AppComponent implements OnInit {
     this.expiring$ = this.oidcFacade.expiring$;
     this.expired$ = this.oidcFacade.expired$;
     this.loggedIn$ = this.oidcFacade.loggedIn$;
-    // this.errors$ = this.oidcFacade.errors$;
+    this.errors$ = this.oidcFacade.errors$;
     this.identity$ = this.oidcFacade.identity$;
   }
 

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Loona } from '@loona/angular';
 import { OidcClient, SigninRequest, SignoutRequest, User as OidcUser, UserManager } from 'oidc-client';
-import { Observable } from 'rxjs';
-import { filter, take, map, tap, pluck } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { filter, take, map, tap, pluck, catchError, concatMap } from 'rxjs/operators';
 import { OidcActions } from '../actions';
 import { OidcEvent, RequestArugments } from '../models';
 import { OidcService } from '../services/oidc.service';
-import { IdentityGQL, NgOidcInfoGQL } from '../graphql/generated/graphql';
+import { IdentityGQL, NgOidcInfoGQL, NgOidcInfo, Identity, UpdateNgOidcInfoGQL } from '../graphql/generated/graphql';
 
 @Injectable({
   providedIn: 'root'
@@ -17,60 +17,56 @@ export class OidcFacade {
   expired$: Observable<boolean>; // this.store.select(fromOidc.isIdentityExpired);
   loggedIn$: Observable<boolean>; // this.store.select(fromOidc.isLoggedIn);
   // identity$: Observable<OidcUser> = null; // this.store.select(fromOidc.getOidcIdentity);
-  identity$: Observable<any>;
-  // errors$: Observable<fromOidc.ErrorState> = null; // this.store.select(fromOidc.selectOidcErrorState);
+  identity$: Observable<OidcUser>;
+  errors$: Observable<any>; // this.store.select(fromOidc.selectOidcErrorState);
+
+  _info$: Observable<NgOidcInfo.NgOidcInfo>;
+  _identity$: Observable<any>;
 
   constructor(
     private loona: Loona,
     private oidcService: OidcService,
     private identityGQL: IdentityGQL,
-    private ngOidcInfoGQL: NgOidcInfoGQL
+    private ngOidcInfoGQL: NgOidcInfoGQL,
+    private updateNgOidInfoGQL: UpdateNgOidcInfoGQL
   ) {
     this.registerDefaultEvents();
 
     const queryRefIdentity = this.loona.query<any>(this.identityGQL.document);
-    const queryRefInfo = this.loona.query<any>(this.ngOidcInfoGQL.document);
+    this._identity$ = queryRefIdentity.valueChanges;
 
-    this.loading$ = queryRefIdentity.valueChanges.pipe(pluck('loading'));
-    this.loggedIn$ = queryRefIdentity.valueChanges.pipe(map(query => query.data.identity != null));
-    this.identity$ = queryRefIdentity.valueChanges.pipe(pluck('data', 'identity'));
-    this.expiring$ = queryRefInfo.valueChanges.pipe(pluck('data', 'ngOidcInfo', 'expiring'));
+    this.loggedIn$ = this._identity$.pipe(map(query => query.data.identity != null));
+    this.identity$ = this._identity$.pipe(pluck('data', 'identity'));
     this.expired$ = this.identity$.pipe(map(identity => (identity && identity.expired) || false));
+
+    const queryRefInfo = this.loona.query<any>(this.ngOidcInfoGQL.document);
+    this._info$ = queryRefInfo.valueChanges.pipe(pluck('data', 'ngOidcInfo'));
+
+    this.expiring$ = this._info$.pipe(pluck('expiring'));
+    this.errors$ = this._info$.pipe(pluck('errors'));
+    this.loading$ = this._info$.pipe(pluck('loading'));
   }
 
   // default bindings to events
   private addUserUnLoaded = function() {
-    console.log('unloaded');
     this.loona.dispatch(new OidcActions.OnUserUnloaded());
   }.bind(this);
 
   private accessTokenExpired = async function() {
-    // if current user exists, pass to action
-    const user: OidcUser = await this.identity$
-      .pipe(
-        filter(identity => identity != null),
-        take(1)
-      )
-      .toPromise();
-
-    this.loona.dispatch(new OidcActions.OnAccessTokenExpired(user));
+    this.loona.dispatch(new OidcActions.OnAccessTokenExpired());
   }.bind(this);
 
   private accessTokenExpiring = function() {
-    console.log('access token expiring');
     this.loona.dispatch(new OidcActions.OnAccessTokenExpiring(true));
   }.bind(this);
 
-  private addSilentRenewError = function(e) {
-    console.log('renewerror');
-    this.loona.dispatch(new OidcActions.OnSilentRenewError(e));
+  private addSilentRenewError = async function(error) {
+    this.loona.dispatch(new OidcActions.OidcError(error));
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
     console.log('loaded');
-    // this.loona.dispatch(new OidcActions.OnUserLoaded(loadedUser));
     this.loona.dispatch(new OidcActions.UserFound(loadedUser));
-    this.loona.dispatch(new OidcActions.OnAccessTokenExpiring(false));
   }.bind(this);
 
   private addUserSignedOut = function() {
@@ -114,32 +110,81 @@ export class OidcFacade {
   }
 
   signinPopup(args?: RequestArugments) {
-    // this.loona.dispatch(new OidcActions.SigninPopup(args));
-    this.oidcService.signInPopup(args).pipe(tap(identity => console.log(identity)));
+    this.oidcService
+      .signInPopup(args)
+      .pipe(
+        catchError(error => {
+          this.loona.dispatch(new OidcActions.OidcError(error));
+          return [];
+        })
+      )
+      .subscribe();
   }
 
   signinRedirect(args?: RequestArugments) {
-    this.loona.dispatch(new OidcActions.SigninRedirect(args));
+    this.oidcService
+      .signInRedirect(args)
+      .pipe(
+        catchError(error => {
+          this.loona.dispatch(new OidcActions.OidcError(error));
+          return [];
+        })
+      )
+      .subscribe();
   }
 
   signinSilent(args?: RequestArugments) {
-    this.loona.dispatch(new OidcActions.SigninSilent(args));
+    this.oidcService
+      .signInSilent(args)
+      .pipe(
+        catchError(error => {
+          this.loona.dispatch(new OidcActions.OidcError(error));
+          return [];
+        })
+      )
+      .subscribe();
   }
 
   signoutPopup(args?: RequestArugments) {
-    this.loona.dispatch(new OidcActions.SignoutPopup(args));
+    this.oidcService
+      .signOutPopup(args)
+      .pipe(
+        catchError(error => {
+          this.loona.dispatch(new OidcActions.OidcError(error));
+          return [];
+        })
+      )
+      .subscribe();
   }
 
   signoutRedirect(args?: RequestArugments) {
-    this.loona.dispatch(new OidcActions.SignoutRedirect(args));
+    this.oidcService
+      .signOutRedirect(args)
+      .pipe(
+        catchError(error => {
+          this.loona.dispatch(new OidcActions.OidcError(error));
+          return [];
+        })
+      )
+      .subscribe();
   }
 
   getSigninUtrl(args?: RequestArugments): Observable<SigninRequest> {
-    return this.oidcService.getSigninUrl(args);
+    return this.oidcService.getSigninUrl(args).pipe(
+      catchError(error => {
+        this.loona.dispatch(new OidcActions.OidcError(error));
+        return [];
+      })
+    );
   }
 
   getSignoutUrl(args?: RequestArugments): Observable<SignoutRequest> {
-    return this.oidcService.getSignoutUrl(args);
+    return this.oidcService.getSignoutUrl(args).pipe(
+      catchError(error => {
+        this.loona.dispatch(new OidcActions.OidcError(error));
+        return [];
+      })
+    );
   }
 
   registerEvent(event: OidcEvent, callback: (...ev: any[]) => void) {

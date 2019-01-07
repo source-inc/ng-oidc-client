@@ -2,13 +2,36 @@ schema {
   query: Query
 }
 
+type OidcError {
+  message: String
+  stack: String
+}
+
+input OidcErrorInput {
+  message: String
+  stack: String
+}
+
+type NgOidcInfo {
+  expiring: Boolean
+  loading: Boolean
+  errors: [OidcError]!
+}
+
+input NgOidcInfoInput {
+  expiring: Boolean
+  loading: Boolean
+  errors: [OidcErrorInput]!
+}
+
+
 type Profile {
   sid: String
   sub: String
   auth_time: Int
   idp: String
-  amr: [String]  
-  name: String  
+  amr: [String]
+  name: String
 }
 
 input ProfileInput {
@@ -16,18 +39,8 @@ input ProfileInput {
   sub: String
   auth_time: Int
   idp: String
-  amr: [String]  
-  name: String  
-}
-
-type NgOidcInfo {
-  expiring: Boolean
-  loading: Boolean
-}
-
-input NgOidcInfoInput {
-  expiring: Boolean
-  loading: Boolean
+  amr: [String]
+  name: String
 }
 
 type Identity {
@@ -53,6 +66,8 @@ input IdentityInput {
   expires_in: Int
   expired: Boolean
 }
+
+
 
 type Query {
   identity: Identity

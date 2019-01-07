@@ -10,7 +10,6 @@ export enum OidcActionTypes {
 
   OnAccessTokenExpired = '[Oidc] on access token expired',
   OnAccessTokenExpiring = '[Oidc] user expiring',
-  OnSilentRenewError = '[Oidc] on silent renew error',
   OnUserLoaded = '[Oidc] on user loaded',
   OnUserUnloaded = '[Oidc] on user unloaded',
   OnUserSignedOut = '[Oidc] on user signed out',
@@ -18,18 +17,6 @@ export enum OidcActionTypes {
 
   UserLoading = '[Oidc] user loading',
   UserDoneLoading = '[Oidc] user done loading',
-  UserLoadingError = '[Oidc] user loading error',
-
-  // Sign In
-  SignInPopup = '[Oidc] sign in popup',
-  SignInRedirect = '[Oidc] sign in redirect',
-  SignInSilent = '[Oidc] sign in silent',
-  SignInError = '[Oidc] sign in popup error',
-
-  // Sign Out
-  SignOutPopup = '[Oidc] sign out popup',
-  SignOutRedirect = '[Oidc] sign out redirect',
-  SignOutError = '[Oidc] sign out popup error',
 
   OidcError = '[Oidc] error'
 }
@@ -56,7 +43,6 @@ export class UserFound {
   variables: any;
 
   constructor(public payload: OidcUser) {
-    console.log({ payload });
     this.variables = {
       identity: {
         ...payload,
@@ -73,18 +59,18 @@ export class OnSessionChanged {
 
 export class OnAccessTokenExpired {
   static type = OidcActionTypes.OnAccessTokenExpired;
-  constructor(public payload: OidcUser) {}
 }
 
 export class OnAccessTokenExpiring {
   static mutation = new UpdateNgOidcInfoGQL(null).document;
-  readonly type = OidcActionTypes.OnAccessTokenExpiring;
   variables: any;
+
   constructor(public payload: boolean) {
     this.variables = {
       info: {
         expiring: payload,
-        loading: null
+        loading: null,
+        errors: []
       }
     };
   }
@@ -98,10 +84,6 @@ export class UserDoneLoading {
   readonly type = OidcActionTypes.UserDoneLoading;
 }
 
-export class UserLoadingError {
-  readonly type = OidcActionTypes.UserLoadingError;
-}
-
 // OIDC EVENTS
 
 export class OnUserLoaded {
@@ -111,64 +93,16 @@ export class OnUserLoaded {
 }
 
 export class OnUserUnloaded {
-  readonly type = OidcActionTypes.OnUserUnloaded;
+  static type = OidcActionTypes.OnUserUnloaded;
 }
 
 export class OnUserSignedOut {
   readonly type = OidcActionTypes.OnUserSignedOut;
 }
 
-export class OnSilentRenewError {
-  readonly type = OidcActionTypes.OnSilentRenewError;
-
-  constructor(public payload: Error) {}
-}
-
-export class SigninPopup {
-  readonly type = OidcActionTypes.SignInPopup;
-
-  constructor(public payload: any) {}
-}
-
-export class SigninRedirect {
-  readonly type = OidcActionTypes.SignInRedirect;
-
-  constructor(public payload: any) {}
-}
-
-export class SignInError {
-  readonly type = OidcActionTypes.SignInError;
-
-  constructor(public payload: Error) {}
-}
-
-export class SignoutPopup {
-  readonly type = OidcActionTypes.SignOutPopup;
-
-  constructor(public payload: any) {}
-}
-
-export class SignoutRedirect {
-  readonly type = OidcActionTypes.SignOutRedirect;
-
-  constructor(public payload: any) {}
-}
-
-export class SignOutError {
-  readonly type = OidcActionTypes.SignOutError;
-
-  constructor(public payload: Error) {}
-}
-
-export class SigninSilent {
-  readonly type = OidcActionTypes.SignInSilent;
-
-  constructor(public payload: any) {}
-}
-
 export class OidcError {
-  readonly type = OidcActionTypes.OidcError;
-  constructor(public payload: any) {}
+  static type = OidcActionTypes.OidcError;
+  constructor(public payload: Error) {}
 }
 
 export type OidcActionsUnion =
@@ -180,23 +114,12 @@ export type OidcActionsUnion =
   //
   | OnUserLoading
   | UserDoneLoading
-  | UserLoadingError
   // Events
   | OnAccessTokenExpired
   | OnAccessTokenExpiring
-  | OnSilentRenewError
   | OnUserLoaded
   | OnUserUnloaded
   | OnUserSignedOut
   | OnSessionChanged
-  //
-  | SigninPopup
-  | SigninRedirect
-  | SigninSilent
-  | SignInError
-  //
-  | SignoutPopup
-  | SignoutRedirect
-  | SignOutError
   //
   | OidcError;

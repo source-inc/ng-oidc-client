@@ -5,13 +5,17 @@ fragment IdentityFields on Identity {
   expires_in
   profile {
     name
-    sid        
+    sid
   }
 }
 
 fragment NgOidcInfoFields on NgOidcInfo {
   expiring
   loading
+  errors {
+    stack
+    message
+  }
 }
 
 query identity {

@@ -38,6 +38,14 @@ export interface NgOidcInfoInput {
   expiring?: Maybe<boolean>;
 
   loading?: Maybe<boolean>;
+
+  errors: (Maybe<OidcErrorInput>)[];
+}
+
+export interface OidcErrorInput {
+  message?: Maybe<string>;
+
+  stack?: Maybe<string>;
 }
 
 // ====================================================
@@ -127,6 +135,16 @@ export namespace NgOidcInfoFields {
     expiring: Maybe<boolean>;
 
     loading: Maybe<boolean>;
+
+    errors: (Maybe<Errors>)[];
+  };
+
+  export type Errors = {
+    __typename?: 'OidcError';
+
+    stack: Maybe<string>;
+
+    message: Maybe<string>;
   };
 }
 
@@ -160,6 +178,10 @@ export const NgOidcInfoFieldsFragment = gql`
   fragment NgOidcInfoFields on NgOidcInfo {
     expiring
     loading
+    errors {
+      stack
+      message
+    }
   }
 `;
 

@@ -6,12 +6,12 @@
                  [position]="'end'"
                  [opened]="true">
       <div class="oidc-debug-container">
-        <p><span>Logged In:</span> <span> {{loggedIn$ | async}}</span></p>
-        <p><span>Identity Loading:</span> <span> {{loading$ | async}}</span></p>
-        <p><span>Token Expiring:</span> <span> {{expiring$ | async | json}}</span></p>
-        <p><span>Token Expired:</span> <span> {{expired$ | async}}</span></p>
-        <!-- <p>Errors:</p>
-        <pre class="errors">{{errors$ | async | json}}</pre> -->
+        <p><span>Logged In: </span><span><strong>{{loggedIn$ | async}}</strong> </span></p>
+        <p><span>Identity Loading: </span><span><strong>{{loading$ | async}}</strong></span></p>
+        <p><span>Token Expiring: </span><span><strong>{{expiring$ | async | json}}</strong></span></p>
+        <p><span>Token Expired: </span><span><strong>{{expired$ | async}}</strong></span></p>
+        <p>Errors:</p>
+        <pre class="errors">{{errors$ | async | json}}</pre>
         <mat-divider></mat-divider>
         <p>Identity:</p>
         <pre>{{identity$ | async | json}}</pre>

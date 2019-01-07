@@ -114,8 +114,11 @@ export class OidcService {
 
   signInPopup(args?: any): Observable<OidcUser> {
     this.setCallbackInformation(true);
-
-    return from(this._oidcUserManager.signinPopup({ ...args }));
+    const siginInPromise = this._oidcUserManager.signinPopup({ ...args });
+    // siginInPromise.catch(error => {
+    //   console.log({ error });
+    // });
+    return from(siginInPromise);
   }
 
   signInRedirect(args?: any): Observable<OidcUser> {

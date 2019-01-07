@@ -84,7 +84,18 @@ export class OidcFacade {
 
   getOidcUser(args?: any) {
     console.log('getOidcUser');
-    this.loona.dispatch(new OidcActions.GetOidcUser(args));
+    this.oidcService
+      .getOidcUser()
+      .pipe(
+        tap((userData: OidcUser) => {
+          // user expired, initiate silent sign-in if configured to automatic
+          if (userData != null && userData.expired === true && this.oidcService.silentRenewEnabled()) {
+            this.oidcService.signInSilent(args);
+          }
+          this.loona.dispatch(new OidcActions.UserFound(userData));
+        })
+      )
+      .subscribe();
   }
 
   removeOidcUser() {

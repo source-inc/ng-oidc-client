@@ -56,6 +56,10 @@ export class OidcService {
     return from(this._oidcUserManager.removeUser());
   }
 
+  silentRenewEnabled(): boolean {
+    return this.config.oidc_config.automaticSilentRenew != null && this.config.oidc_config.automaticSilentRenew;
+  }
+
   registerOidcEvent(event: OidcEvent, callback: (...ev: any[]) => void) {
     switch (event) {
       case OidcEvent.AccessTokenExpired:

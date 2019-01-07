@@ -58,11 +58,11 @@ export function getWebStorageStateStore() {
         accessTokenExpiringNotificationTime: 10,
         automaticSilentRenew: true,
         userStore: getWebStorageStateStore
+      },
+      log: {
+        logger: console,
+        level: 4
       }
-      // log: {
-      //   logger: console,
-      //   level: 0
-      // },
       // useCallbackFlag: true
     }),
     MaterialModule

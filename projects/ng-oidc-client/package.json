@@ -24,8 +24,8 @@
   "homepage" :"https://fileless.github.io/ng-oidc-client/",
   "keywords" :["angular","library","openidconnect","oidc","openid","authentication","identity","sso", "auth", "oauth2","authn","implicit"],
   "peerDependencies": {
-    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-    "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
+    "@angular/common": "^6.0.0-rc.0 || ^8.0.0",
+    "@angular/core": "^6.0.0-rc.0 || ^8.0.0"
   },
   "typings": "index.d.ts",
   "license": "MIT"

@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Upgrade packages
 
+## [1.0.6] - 2019-08-13
+### Fixed
+- Upgrade packages
+
 ## [1.0.5] - 2018-12-05
 ### Added
 - Upgrade to Angular 7
-### Fixex
+### Fixed
 - Removed log messages
 
 ## [1.0.4] - 2018-10-18
@@ -37,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First release
 
+[1.0.6]: https://github.com/fileless/ng-oidc-client/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/fileless/ng-oidc-client/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/fileless/ng-oidc-client/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/fileless/ng-oidc-client/compare/v1.0.2...v1.0.3

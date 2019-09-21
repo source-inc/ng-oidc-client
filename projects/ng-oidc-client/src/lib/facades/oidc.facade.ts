@@ -41,7 +41,18 @@ export class OidcFacade {
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
-    this.store.dispatch(new OidcActions.OnUserLoaded(loadedUser));
+    const serializableLoadedUser = {
+      id_token: loadedUser.id_token,
+      session_state: loadedUser.session_state,
+      access_token: loadedUser.access_token,
+      refresh_token: loadedUser.refresh_token,
+      token_type: loadedUser.token_type,
+      scope: loadedUser.scope,
+      profile: loadedUser.profile,
+      expires_at: loadedUser.expires_at,
+      state: loadedUser.state
+    };
+    this.store.dispatch(new OidcActions.OnUserLoaded(serializableLoadedUser));
   }.bind(this);
 
   private addUserSignedOut = function() {

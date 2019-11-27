@@ -1,43 +1,43 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Log, OidcClient, SigninRequest, SignoutRequest, User as OidcUser, UserManager } from 'oidc-client';
+import { Log, OidcClient, User as OidcUser, UserManager } from 'oidc-client';
 import { from, Observable } from 'rxjs';
-import { Config, OIDC_CONFIG } from '../models/config.model';
-import { OidcEvent, StorageKeys } from '../models';
+import { Config, OidcEvent, RequestArugments, StorageKeys } from '../models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OidcService {
-  private _oidcUserManager: UserManager;
-  private _oidcClient: OidcClient;
-
+  private _oidcUserManager: UserManager = new UserManager({});
+  private _oidcClient: OidcClient = new OidcClient({});
   private _useCallbackFlag = true;
 
-  constructor(@Inject(OIDC_CONFIG) private config: Config, @Inject(PLATFORM_ID) private platformId: Object) {
-    const logSettings = this.config.log;
-    let clientSettings = this.config.oidc_config;
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
-    if (this.config.useCallbackFlag != null) {
-      this._useCallbackFlag = this.config.useCallbackFlag;
+  configureClient(config: Config) {
+    let { oidc_config = {} } = config || {};
+    const { log = null, useCallbackFlag = true } = config || {};
+
+    if (useCallbackFlag != null) {
+      this._useCallbackFlag = useCallbackFlag;
     } else {
       this._useCallbackFlag = true;
     }
 
-    if (logSettings) {
-      Log.level = logSettings.level;
-      Log.logger = logSettings.logger;
+    if (log != null) {
+      Log.level = log.level;
+      Log.logger = log.logger;
     }
 
-    if (clientSettings.userStore != null) {
-      clientSettings = {
-        ...clientSettings,
-        userStore: clientSettings.userStore()
+    if (oidc_config.userStore != null) {
+      oidc_config = {
+        ...oidc_config,
+        userStore: oidc_config.userStore()
       };
     }
 
-    this._oidcUserManager = new UserManager(clientSettings);
-    this._oidcClient = new OidcClient(clientSettings);
+    this._oidcUserManager = new UserManager(oidc_config);
+    this._oidcClient = new OidcClient(oidc_config);
   }
 
   getUserManager(): UserManager {
@@ -112,55 +112,51 @@ export class OidcService {
     }
   }
 
-  signInPopup(args?: any): Observable<OidcUser> {
+  signInPopup(args?: RequestArugments) {
     this.setCallbackInformation(true);
-
     return from(this._oidcUserManager.signinPopup({ ...args }));
   }
 
-  signInRedirect(args?: any): Observable<OidcUser> {
+  signInRedirect(args?: RequestArugments) {
     this.setCallbackInformation(false);
-
     return from(this._oidcUserManager.signinRedirect({ ...args }));
   }
 
-  signOutPopup(args?: any): Observable<any> {
+  signOutPopup(args?: RequestArugments) {
     this.setCallbackInformation(true);
-
     return from(this._oidcUserManager.signoutPopup({ ...args }));
   }
 
-  signOutRedirect(args?: any): Observable<any> {
+  signOutRedirect(args?: RequestArugments) {
     this.setCallbackInformation(false);
-
     return from(this._oidcUserManager.signoutRedirect({ ...args }));
   }
 
-  signInSilent(args?: any): Observable<OidcUser> {
+  signInSilent(args?: RequestArugments) {
     return from(this._oidcUserManager.signinSilent({ ...args }));
   }
 
-  signinPopupCallback(): Observable<any> {
+  signinPopupCallback() {
     return from(this._oidcUserManager.signinPopupCallback());
   }
 
-  signinRedirectCallback(): Observable<OidcUser> {
+  signinRedirectCallback() {
     return from(this._oidcUserManager.signinRedirectCallback());
   }
 
-  signoutPopupCallback(): Observable<void> {
+  signoutPopupCallback() {
     return from(this._oidcUserManager.signoutPopupCallback());
   }
 
-  signoutRedirectCallback(): Observable<any> {
+  signoutRedirectCallback() {
     return from(this._oidcUserManager.signoutRedirectCallback());
   }
 
-  getSigninUrl(args?: any): Observable<SigninRequest> {
+  getSigninUrl(args?: RequestArugments) {
     return from(this._oidcUserManager.createSigninRequest(args));
   }
 
-  getSignoutUrl(args?: any): Observable<SignoutRequest> {
+  getSignoutUrl(args?: RequestArugments) {
     return from(this._oidcUserManager.createSignoutRequest(args));
   }
 

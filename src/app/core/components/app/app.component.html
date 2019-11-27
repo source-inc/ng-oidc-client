@@ -6,6 +6,7 @@
                  [position]="'end'"
                  [opened]="true">
       <div class="oidc-debug-container">
+        <p><span>Oidc onfigured:</span> <span> {{configured$ | async}}</span></p>
         <p><span>Logged In:</span> <span> {{loggedIn$ | async}}</span></p>
         <p><span>Identity Loading:</span> <span> {{loading$ | async}}</span></p>
         <p><span>Token Expiring:</span> <span> {{expiring$ | async}}</span></p>

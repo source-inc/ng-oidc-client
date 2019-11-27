@@ -22,7 +22,7 @@ export class UserEffects {
         }),
         catchError(error => {
           console.error(error);
-          return of(new GetUserMeError(error));
+          return of(new GetUserMeError(error.message));
         })
       )
     )

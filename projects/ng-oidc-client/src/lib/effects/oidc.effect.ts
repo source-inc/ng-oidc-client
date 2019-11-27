@@ -1,135 +1,114 @@
-import { Inject, Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
-import { User as OidcUser } from 'oidc-client';
-import { Observable, of } from 'rxjs';
-import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
+import { Injectable, Inject, Optional } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Action } from '@ngrx/store/src/models';
+import { EMPTY, merge, Observable, of } from 'rxjs';
+import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { OidcActions } from '../actions';
-import { Config, OIDC_CONFIG } from '../models/config.model';
-import { ACTION_NO_ACTION } from '../models/constants';
+import { toSerializedUser } from '../oidc.utils';
 import { OidcService } from '../services/oidc.service';
+import { Config, OIDC_CONFIG } from '../models';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class OidcEffects {
-  constructor(
-    private actions$: Actions,
-    @Inject(OidcService) private oidcService: OidcService,
-    @Inject(OIDC_CONFIG) private config: Config
-  ) {}
+  constructor(private actions$: Actions, private oidcService: OidcService) {}
 
-  @Effect()
-  getOicdUser$ = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.GetOidcUser),
-    map((action: OidcActions.GetOidcUser) => action.payload),
-    concatMap(args =>
-      this.oidcService.getOidcUser().pipe(
-        concatMap((userData: OidcUser) => {
-          const r: Action[] = [new OidcActions.UserFound(userData)];
-          const automaticSilentRenew =
-            this.config.oidc_config.automaticSilentRenew != null && this.config.oidc_config.automaticSilentRenew;
-          // user expired, initiate silent sign-in if configured to automatic
-          if (userData != null && userData.expired === true && automaticSilentRenew === true) {
-            r.push(new OidcActions.SigninSilent(args));
-          }
-          return r;
-        }),
-        catchError(error => {
-          return of(new OidcActions.UserDoneLoading());
-        })
+  getOicdUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.GetOidcUser),
+      concatMap(({ payload }) =>
+        this.oidcService.getOidcUser().pipe(
+          concatMap(user => {
+            const actions: Observable<Action>[] = [of(OidcActions.UserFound({ payload: toSerializedUser(user) }))];
+            if (user != null && user.expired === true) {
+              actions.push(of(OidcActions.SigninSilent({ payload })));
+            }
+            return merge(...actions);
+          }),
+          catchError(() => of(OidcActions.UserDoneLoading()))
+        )
       )
     )
   );
-  @Effect()
-  removeOidcUser$ = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.RemoveOidcUser),
-    concatMap(() => {
-      return this.oidcService.removeOidcUser().pipe(
-        concatMap(() => [new OidcActions.UserDoneLoading()]),
-        catchError(error => [new OidcActions.OidcError(error)]) //
-      );
-    })
+
+  userFound$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.UserFound),
+      map(() => OidcActions.UserDoneLoading())
+    )
   );
 
-  @Effect()
-  userFound$ = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.UserFound),
-    concatMap(() => {
-      return [new OidcActions.UserDoneLoading()];
-    })
+  onUserLoaded$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.OnUserLoaded),
+      map(({ payload }) => OidcActions.UserFound({ payload }))
+    )
   );
 
-  @Effect()
-  onUserLoaded$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.OnUserLoaded),
-    map((action: OidcActions.OnUserLoaded) => action.payload),
-    switchMap((userData: OidcUser) => {
-      return [new OidcActions.UserFound(userData)];
-    })
+  signInPopup$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.SigninPopup),
+      concatMap(({ payload }) =>
+        this.oidcService.signInPopup(payload).pipe(
+          concatMap(user => EMPTY),
+          catchError(error => of(OidcActions.SignInError({ payload: error.message })))
+        )
+      )
+    )
   );
 
-  @Effect()
-  signInPopup$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.SignInPopup),
-    map((action: OidcActions.SigninPopup) => action.payload),
-    concatMap(args => {
-      return this.oidcService.signInPopup(args).pipe(
-        concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new OidcActions.SignInError(error)))
-      );
-    })
+  signInRedirect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.SigninRedirect),
+      concatMap(({ payload }) =>
+        this.oidcService.signInRedirect(payload).pipe(
+          concatMap(() => EMPTY),
+          catchError(error => {
+            return of(OidcActions.SignInError({ payload: error.message }));
+          })
+        )
+      )
+    )
   );
 
-  @Effect()
-  signInRedirect$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.SignInRedirect),
-    map((action: OidcActions.SigninRedirect) => action.payload),
-    concatMap(args => {
-      return this.oidcService.signInRedirect(args).pipe(
-        concatMap((user: OidcUser) => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new OidcActions.SignInError(error)))
-      );
-    })
-  );
-
-  @Effect()
-  signInSilent$ = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.SignInSilent),
-    map((action: OidcActions.SigninSilent) => action.payload),
-    concatMap(args => {
-      return this.oidcService.signInSilent(args).pipe(
-        concatMap((userData: OidcUser) => {
-          return [new OidcActions.UserFound(userData)];
-        }),
-        catchError(error => {
+  signInSilent$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.SigninSilent),
+      switchMap(({ payload }) =>
+        this.oidcService.signInSilent(payload).pipe(
+          map(user => OidcActions.UserFound({ payload: toSerializedUser(user) })),
           // Something went wrong renewing the access token.
           // Set loading done so the auth guard will resolve.
-          return of(new OidcActions.OnSilentRenewError(error), new OidcActions.UserDoneLoading());
-        })
-      );
-    })
+          catchError(error =>
+            of(OidcActions.OnSilentRenewError({ payload: error.message }), OidcActions.UserDoneLoading())
+          )
+        )
+      )
+    )
   );
 
-  @Effect()
-  signOutPopup$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.SignOutPopup),
-    map((action: OidcActions.SignoutPopup) => action.payload),
-    concatMap(args => {
-      return this.oidcService.signOutPopup(args).pipe(
-        concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new OidcActions.SignOutError(error)))
-      );
-    })
+  signOutPopup$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.SignoutPopup),
+      switchMap(({ payload }) =>
+        this.oidcService.signOutPopup(payload).pipe(
+          concatMap(() => EMPTY),
+          catchError(error => of(OidcActions.SignOutError({ payload: error.message })))
+        )
+      )
+    )
   );
 
-  @Effect()
-  signOutRedirect$: Observable<Action> = this.actions$.pipe(
-    ofType(OidcActions.OidcActionTypes.SignOutRedirect),
-    map((action: OidcActions.SignoutRedirect) => action.payload),
-    concatMap(args => {
-      return this.oidcService.signOutRedirect(args).pipe(
-        concatMap(() => of({ type: ACTION_NO_ACTION })), // dispatch empty action
-        catchError(error => of(new OidcActions.SignOutError(error)))
-      );
-    })
+  signOutRedirect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OidcActions.SignOutRedirect),
+      switchMap(({ payload }) =>
+        this.oidcService.signOutRedirect(payload).pipe(
+          concatMap(() => EMPTY),
+          catchError(error => of(OidcActions.SignOutError({ payload: error.message })))
+        )
+      )
+    )
   );
 }

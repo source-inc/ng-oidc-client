@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit {
   title = 'ng-oidc-client-app';
+  configured$: Observable<boolean>;
   identity$: Observable<User>;
   loading$: Observable<boolean>;
   expiring$: Observable<boolean>;
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
   errors$: Observable<any>;
 
   constructor(private oidcFacade: OidcFacade) {
+    this.configured$ = this.oidcFacade.configured$;
     this.loading$ = this.oidcFacade.loading$;
     this.expiring$ = this.oidcFacade.expiring$;
     this.expired$ = this.oidcFacade.expired$;
@@ -28,6 +30,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Example loading config from app component.
+    // this.oidcFacade.configureOidcClient(oidcConfigSettings);
     this.oidcFacade.getOidcUser();
   }
 

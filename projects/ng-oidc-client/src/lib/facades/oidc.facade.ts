@@ -52,9 +52,7 @@ export class OidcFacade {
   }.bind(this);
 
   private addUserLoaded = function(loadedUser: OidcUser) {
-    setTimeout(() => {
-      this.store.dispatch(OidcActions.OnUserLoaded({ payload: toSerializedUser(loadedUser) }));
-    }, 3000);
+    this.store.dispatch(OidcActions.OnUserLoaded({ payload: toSerializedUser(loadedUser) }));
   }.bind(this);
 
   private addUserSignedOut = function() {

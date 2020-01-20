@@ -2,7 +2,7 @@ import { Injectable, Inject, Optional } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store/src/models';
 import { EMPTY, merge, Observable, of } from 'rxjs';
-import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import { OidcActions } from '../actions';
 import { toSerializedUser } from '../oidc.utils';
 import { OidcService } from '../services/oidc.service';
@@ -51,7 +51,7 @@ export class OidcEffects {
       ofType(OidcActions.SigninPopup),
       concatMap(({ payload }) =>
         this.oidcService.signInPopup(payload).pipe(
-          concatMap(user => EMPTY),
+          map(user => OidcActions.UserFound({ payload: toSerializedUser(user) })),
           catchError(error => of(OidcActions.SignInError({ payload: error.message })))
         )
       )

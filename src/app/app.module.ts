@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { NgOidcClientModule } from 'ng-oidc-client';
+import { NgOidcClientModule, OidcFacade } from 'ng-oidc-client';
 import { AppComponent } from './core/components/app/app.component';
 import { HomeComponent } from './core/components/home/home.component';
 import { OidcGuardService } from './core/providers/oidc-guard.service';
@@ -49,37 +49,57 @@ export function getWebStorageStateStore() {
   return new WebStorageStateStore({ store: window.localStorage });
 }
 
+export const oidcConfigSettings = {
+  oidc_config: {
+    authority: 'https:/ng-oidc-client-server.azurewebsites.net',
+    client_id: 'ng-oidc-client-identity',
+    redirect_uri: 'http://localhost:4200/callback.html',
+    response_type: 'code',
+    scope: 'openid profile offline_access api1',
+    post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
+    silent_redirect_uri: 'http://localhost:4200/renew-callback.html',
+    accessTokenExpiringNotificationTime: 10,
+    automaticSilentRenew: true,
+    userStore: getWebStorageStateStore
+  }
+  // log: {
+  //   logger: console,
+  //   level: 0
+  // },
+  // useCallbackFlag: true
+};
+
+// Oidc config on APP_INITIALIZER
+// export function loadConfig(facade: OidcFacade) {
+//   return () =>
+//     new Promise(resolve => {
+//       setTimeout(() => {
+//         facade.configureOidcClient(configSettings);
+//         resolve();
+//       }, 2000);
+//     });
+// }
+
 @NgModule({
   declarations: [AppComponent, ProtectedComponent, HomeComponent, LoginComponent, UnauthorizedComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(routes),
-    StoreModule.forRoot(rootStore),
+    StoreModule.forRoot(rootStore, {
+      runtimeChecks: {
+        strictStateSerializability: true,
+        strictActionSerializability: true,
+        strictStateImmutability: true,
+        strictActionImmutability: true
+      }
+    }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
       name: 'ng-oidc-client',
       logOnly: true
     }),
-    NgOidcClientModule.forRoot({
-      oidc_config: {
-        authority: 'https:/ng-oidc-client-server.azurewebsites.net',
-        client_id: 'ng-oidc-client-identity',
-        redirect_uri: 'http://localhost:4200/callback.html',
-        response_type: 'id_token token',
-        scope: 'openid profile offline_access api1',
-        post_logout_redirect_uri: 'http://localhost:4200/signout-callback.html',
-        silent_redirect_uri: 'http://localhost:4200/renew-callback.html',
-        accessTokenExpiringNotificationTime: 10,
-        automaticSilentRenew: true,
-        userStore: getWebStorageStateStore
-      }
-      // log: {
-      //   logger: console,
-      //   level: 0
-      // },
-      // useCallbackFlag: true
-    }),
+    NgOidcClientModule,
     UserModule.forRoot({
       urls: {
         api: 'https://localhost:5001'
@@ -94,6 +114,12 @@ export function getWebStorageStateStore() {
       useClass: OidcInterceptorService,
       multi: true
     }
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: loadConfig,
+    //   deps: [OidcFacade],
+    //   multi: true
+    // }
   ],
   bootstrap: [AppComponent]
 })

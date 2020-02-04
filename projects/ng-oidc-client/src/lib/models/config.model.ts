@@ -2,7 +2,7 @@ import { InjectionToken } from '@angular/core';
 import { UserManagerSettings, Logger } from 'oidc-client';
 
 export interface Config {
-  oidc_config: UserManagerSettings;
+  oidc_config: Partial<UserManagerSettings>;
   useCallbackFlag?: boolean;
   log?: {
     logger: Logger;

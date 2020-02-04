@@ -15,7 +15,8 @@
   <script>
     var Oidc = window.Oidc;
     var config = {
-      userStore: new Oidc.WebStorageStateStore({ store: window.localStorage })
+      userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
+        response_mode: 'query'
     }
     if ((Oidc && Oidc.Log && Oidc.Log.logger)) {
       Oidc.Log.logger = console;

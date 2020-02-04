@@ -1,13 +1,19 @@
-import { Action } from '@ngrx/store';
-import { User as OidcUser, User } from 'oidc-client';
+import { createAction, props } from '@ngrx/store';
+import { UserSettings } from 'oidc-client';
+import { RequestArugments } from '../models';
 
 export enum OidcActionTypes {
+  ClientConfigued = '[Oidc] client configured',
+  ClientConfigError = '[Oidc] client configuration error',
   GetOidcUser = '[Oidc] get oidc user',
   RemoveOidcUser = '[Oidc] remove oidc user',
-
   UserExpired = '[Oidc] user expired',
   UserFound = '[Oidc] user found',
+  UserLoading = '[Oidc] user loading',
+  UserDoneLoading = '[Oidc] user done loading',
+  UserLoadingError = '[Oidc] user loading error',
 
+  // Events
   OnAccessTokenExpired = '[Oidc] on access token expired',
   OnAccessTokenExpiring = '[Oidc] user expiring',
   OnSilentRenewError = '[Oidc] on silent renew error',
@@ -15,10 +21,6 @@ export enum OidcActionTypes {
   OnUserUnloaded = '[Oidc] on user unloaded',
   OnUserSignedOut = '[Oidc] on user signed out',
   OnSessionChanged = '[Oidc] session changed',
-
-  UserLoading = '[Oidc] user loading',
-  UserDoneLoading = '[Oidc] user done loading',
-  UserLoadingError = '[Oidc] user loading error',
 
   // Sign In
   SignInPopup = '[Oidc] sign in popup',
@@ -34,147 +36,50 @@ export enum OidcActionTypes {
   OidcError = '[Oidc] error'
 }
 
-// OIDC COMMANDS
+export const ClientConfigured = createAction(OidcActionTypes.ClientConfigued);
 
-export class GetOidcUser implements Action {
-  readonly type = OidcActionTypes.GetOidcUser;
+export const ClientConfigError = createAction(OidcActionTypes.ClientConfigError, props<{ payload?: string }>());
 
-  constructor(public payload: any) {}
-}
+export const GetOidcUser = createAction(OidcActionTypes.GetOidcUser, props<{ payload?: RequestArugments }>());
 
-export class RemoveOidcUser implements Action {
-  readonly type = OidcActionTypes.RemoveOidcUser;
-}
+export const RemoveOidcUser = createAction(OidcActionTypes.RemoveOidcUser);
 
-export class UserExpired implements Action {
-  readonly type = OidcActionTypes.UserExpired;
-}
+export const UserExpired = createAction(OidcActionTypes.UserExpired);
 
-export class UserFound implements Action {
-  readonly type = OidcActionTypes.UserFound;
+export const UserFound = createAction(OidcActionTypes.UserFound, props<{ payload?: UserSettings }>());
 
-  constructor(public payload: OidcUser) {}
-}
+export const OnSessionChanged = createAction(OidcActionTypes.OnSessionChanged);
 
-export class OnSessionChanged implements Action {
-  readonly type = OidcActionTypes.OnSessionChanged;
-}
+export const OnAccessTokenExpired = createAction(OidcActionTypes.OnAccessTokenExpired);
 
-export class OnAccessTokenExpired implements Action {
-  readonly type = OidcActionTypes.OnAccessTokenExpired;
-}
+export const OnAccessTokenExpiring = createAction(OidcActionTypes.OnAccessTokenExpiring);
 
-export class OnAccessTokenExpiring implements Action {
-  readonly type = OidcActionTypes.OnAccessTokenExpiring;
-}
+export const OnUserLoading = createAction(OidcActionTypes.UserLoading);
 
-export class OnUserLoading implements Action {
-  readonly type = OidcActionTypes.UserLoading;
-}
+export const UserDoneLoading = createAction(OidcActionTypes.UserDoneLoading);
 
-export class UserDoneLoading implements Action {
-  readonly type = OidcActionTypes.UserDoneLoading;
-}
+export const UserLoadingError = createAction(OidcActionTypes.UserLoadingError);
 
-export class UserLoadingError implements Action {
-  readonly type = OidcActionTypes.UserLoadingError;
-}
+export const OnUserLoaded = createAction(OidcActionTypes.OnUserLoaded, props<{ payload: UserSettings }>());
 
-// OIDC EVENTS
+export const OnUserUnloaded = createAction(OidcActionTypes.OnUserUnloaded);
 
-export class OnUserLoaded implements Action {
-  readonly type = OidcActionTypes.OnUserLoaded;
+export const OnUserSignedOut = createAction(OidcActionTypes.OnUserSignedOut);
 
-  constructor(public payload: OidcUser) {}
-}
+export const OnSilentRenewError = createAction(OidcActionTypes.OnSilentRenewError, props<{ payload: string }>());
 
-export class OnUserUnloaded implements Action {
-  readonly type = OidcActionTypes.OnUserUnloaded;
-}
+export const SigninPopup = createAction(OidcActionTypes.SignInPopup, props<{ payload?: RequestArugments }>());
 
-export class OnUserSignedOut implements Action {
-  readonly type = OidcActionTypes.OnUserSignedOut;
-}
+export const SigninRedirect = createAction(OidcActionTypes.SignInRedirect, props<{ payload?: RequestArugments }>());
 
-export class OnSilentRenewError implements Action {
-  readonly type = OidcActionTypes.OnSilentRenewError;
+export const SignoutPopup = createAction(OidcActionTypes.SignOutPopup, props<{ payload?: RequestArugments }>());
 
-  constructor(public payload: Error) {}
-}
+export const SignOutRedirect = createAction(OidcActionTypes.SignOutRedirect, props<{ payload?: RequestArugments }>());
 
-export class SigninPopup implements Action {
-  readonly type = OidcActionTypes.SignInPopup;
+export const SigninSilent = createAction(OidcActionTypes.SignInSilent, props<{ payload?: RequestArugments }>());
 
-  constructor(public payload: any) {}
-}
+export const SignInError = createAction(OidcActionTypes.SignInError, props<{ payload: string }>());
 
-export class SigninRedirect implements Action {
-  readonly type = OidcActionTypes.SignInRedirect;
+export const SignOutError = createAction(OidcActionTypes.SignOutError, props<{ payload: string }>());
 
-  constructor(public payload: any) {}
-}
-
-export class SignInError implements Action {
-  readonly type = OidcActionTypes.SignInError;
-
-  constructor(public payload: Error) {}
-}
-
-export class SignoutPopup implements Action {
-  readonly type = OidcActionTypes.SignOutPopup;
-
-  constructor(public payload: any) {}
-}
-
-export class SignoutRedirect implements Action {
-  readonly type = OidcActionTypes.SignOutRedirect;
-
-  constructor(public payload: any) {}
-}
-
-export class SignOutError implements Action {
-  readonly type = OidcActionTypes.SignOutError;
-
-  constructor(public payload: Error) {}
-}
-
-export class SigninSilent implements Action {
-  readonly type = OidcActionTypes.SignInSilent;
-
-  constructor(public payload: any) {}
-}
-
-export class OidcError implements Action {
-  readonly type = OidcActionTypes.OidcError;
-  constructor(public payload: any) {}
-}
-
-export type OidcActionsUnion =
-  | GetOidcUser
-  | RemoveOidcUser
-  //
-  | UserExpired
-  | UserFound
-  //
-  | OnUserLoading
-  | UserDoneLoading
-  | UserLoadingError
-  // Events
-  | OnAccessTokenExpired
-  | OnAccessTokenExpiring
-  | OnSilentRenewError
-  | OnUserLoaded
-  | OnUserUnloaded
-  | OnUserSignedOut
-  | OnSessionChanged
-  //
-  | SigninPopup
-  | SigninRedirect
-  | SigninSilent
-  | SignInError
-  //
-  | SignoutPopup
-  | SignoutRedirect
-  | SignOutError
-  //
-  | OidcError;
+export const OidcError = createAction(OidcActionTypes.OidcError, props<{ payload: any }>());

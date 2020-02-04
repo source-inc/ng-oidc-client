@@ -4,9 +4,9 @@
 [![npm](https://img.shields.io/npm/dm/ng-oidc-client.svg)](https://www.npmjs.com/ng-oidc-client)
 [![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)](https://www.npmjs.com/ng-oidc-client)
 
-An Angular 6+ package wrapping [oidc-client-js][1] to manage authentication with OIDC and OAuth2 in a reactive way using [NgRx][2].
+An Angular package wrapping [oidc-client-js][1] to manage authentication with OIDC and OAuth2 in a reactive way using [NgRx][2].
 
-<img src="https://github.com/Fileless/ng-oidc-client/blob/master/images/oidc-state-devtools-animated.gif" alt="OIDC State in Redux DevTools">
+<img src="https://github.com/sourcenetwork/ng-oidc-client/blob/master/images/oidc-state-devtools-animated.gif" alt="OIDC State in Redux DevTools">
 
 ## Getting started 🚀
 The configuration for the examples are based on running IdentityServer4 on localhost. A ready-to-go reference implementation for testing purposes can be found at [ng-oidc-client-server][4]. 
@@ -315,6 +315,6 @@ This software is [licensed][6] under the MIT
 [1]: https://github.com/IdentityModel/oidc-client-js
 [2]: https://github.com/ngrx/platform
 [3]: https://github.com/IdentityModel/oidc-client-js/wiki#configuration
-[4]: https://github.com/Fileless/ng-oidc-client-server
-[5]: https://github.com/Fileless/ng-oidc-client/wiki
-[6]: https://github.com/Fileless/ng-oidc-client/blob/master/LICENSE
+[4]: https://github.com/sourcenetwork/ng-oidc-client-server
+[5]: https://github.com/sourcenetwork/ng-oidc-client/wiki
+[6]: https://github.com/sourcenetwork/ng-oidc-client/blob/master/LICENSE

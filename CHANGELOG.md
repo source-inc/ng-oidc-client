@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2020-02-04
+### Breaking Changes
+- Updated to Angular/NgRx 8
+### Added
+- Update packages
+- Add configuration options
+- Expose oidc client service
+- Implement action and effect creators
+### Fixed
+- Serialize identity
+- Added additional request params
+
 ## [1.0.7] - 2019-10-27
 ### Fixed
 - Revert to angular 7
@@ -44,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First release
 
+[2.0.0]: https://github.com/fileless/ng-oidc-client/compare/v1.0.7...v2.0.0
 [1.0.7]: https://github.com/fileless/ng-oidc-client/compare/v1.0.6...v1.0.7
 [1.0.6]: https://github.com/fileless/ng-oidc-client/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/fileless/ng-oidc-client/compare/v1.0.4...v1.0.5

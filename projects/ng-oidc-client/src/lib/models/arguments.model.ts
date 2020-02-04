@@ -1,4 +1,4 @@
-interface RequestArgs {
+export interface RequestArgs {
   // mandatory
   url: string;
   client_id: string;

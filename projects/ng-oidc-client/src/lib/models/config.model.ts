@@ -1,9 +1,9 @@
 import { InjectionToken } from '@angular/core';
 import { UserManagerSettings, Logger, WebStorageStateStore } from 'oidc-client';
 
-// @ts-ignore
+
 interface NgOidcConfigSettings extends UserManagerSettings {
-  userStore?: WebStorageStateStore | (() => WebStorageStateStore);
+  userStore?: WebStorageStateStore | any;
 }
 
 export interface Config {

@@ -12,15 +12,9 @@ export const getOidcIdentity = createSelector(selectOidcState, state => fromSeri
 
 export const isIdentityExpiring = createSelector(selectOidcState, state => state.expiring);
 
-export const isIdentityExpired = createSelector(
-  getOidcIdentity,
-  identity => identity != null && fromSerializedUser(identity).expired
-);
+export const isIdentityExpired = createSelector(getOidcIdentity, identity => identity != null && identity.expired);
 
-export const isLoggedIn = createSelector(
-  getOidcIdentity,
-  identity => identity != null && fromSerializedUser(identity).expired !== true
-);
+export const isLoggedIn = createSelector(getOidcIdentity, identity => identity != null && identity.expired !== true);
 
 // errors
 export const selectOidcErrorState = createSelector(selectOidcState, state => state.errors);

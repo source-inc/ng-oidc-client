@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Log, OidcClient, User as OidcUser, UserManager } from 'oidc-client';
+import { Log, OidcClient, User as OidcUser, UserManager, WebStorageStateStore, UserManagerSettings } from 'oidc-client';
 import { from, Observable } from 'rxjs';
 import { Config, OidcEvent, RequestArugments, StorageKeys } from '../models';
 
@@ -15,7 +15,20 @@ export class OidcService {
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   configureClient(config: Config) {
-    let { oidc_config = {} } = config || {};
+    const { oidc_config = {} } = config || {};
+    let userStore: WebStorageStateStore;
+
+    // Check what type of user store was passed.
+    if (oidc_config.userStore != null) {
+      if (oidc_config.userStore instanceof WebStorageStateStore) {
+        userStore = oidc_config.userStore;
+      } else if (typeof oidc_config.userStore === 'function') {
+        userStore = oidc_config.userStore();
+      }
+    }
+
+    const oidcClientSettings: UserManagerSettings = { ...oidc_config, userStore };
+
     const { log = null, useCallbackFlag = true } = config || {};
 
     if (useCallbackFlag != null) {
@@ -29,15 +42,8 @@ export class OidcService {
       Log.logger = log.logger;
     }
 
-    if (oidc_config.userStore != null) {
-      oidc_config = {
-        ...oidc_config,
-        userStore: oidc_config.userStore()
-      };
-    }
-
-    this._oidcUserManager = new UserManager(oidc_config);
-    this._oidcClient = new OidcClient(oidc_config);
+    this._oidcUserManager = new UserManager(oidcClientSettings);
+    this._oidcClient = new OidcClient(oidcClientSettings);
   }
 
   getUserManager(): UserManager {

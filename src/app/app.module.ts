@@ -5,7 +5,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { NgOidcClientModule, OidcFacade } from 'ng-oidc-client';
+import { NgOidcClientModule, Config } from 'ng-oidc-client';
 import { AppComponent } from './core/components/app/app.component';
 import { HomeComponent } from './core/components/home/home.component';
 import { OidcGuardService } from './core/providers/oidc-guard.service';
@@ -49,7 +49,7 @@ export function getWebStorageStateStore() {
   return new WebStorageStateStore({ store: window.localStorage });
 }
 
-export const oidcConfigSettings = {
+export const oidcConfigSettings: Config = {
   oidc_config: {
     authority: 'https:/ng-oidc-client-server.azurewebsites.net',
     client_id: 'ng-oidc-client-identity',
@@ -99,7 +99,7 @@ export const oidcConfigSettings = {
       name: 'ng-oidc-client',
       logOnly: true
     }),
-    NgOidcClientModule,
+    NgOidcClientModule.forRoot(oidcConfigSettings),
     UserModule.forRoot({
       urls: {
         api: 'https://localhost:5001'

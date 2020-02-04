@@ -1,8 +1,13 @@
 import { InjectionToken } from '@angular/core';
-import { UserManagerSettings, Logger } from 'oidc-client';
+import { UserManagerSettings, Logger, WebStorageStateStore } from 'oidc-client';
+
+// @ts-ignore
+interface NgOidcConfigSettings extends UserManagerSettings {
+  userStore?: WebStorageStateStore | (() => WebStorageStateStore);
+}
 
 export interface Config {
-  oidc_config: Partial<UserManagerSettings>;
+  oidc_config: NgOidcConfigSettings;
   useCallbackFlag?: boolean;
   log?: {
     logger: Logger;

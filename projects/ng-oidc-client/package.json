@@ -1,6 +1,6 @@
 {
   "name": "ng-oidc-client",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "main": "index.js",
   "description": "An Angular package wrapping oidc-client library to manage authentication with OpenID Connect (OIDC) and OAuth2 in a reactive way using NgRx.",
   "author": "Alexandru Gogan & David Turner",

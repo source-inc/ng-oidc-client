@@ -5,6 +5,8 @@ import { StoreModule } from '@ngrx/store';
 import { OidcEffects } from './effects/oidc.effect';
 import { Config, OIDC_CONFIG } from './models/config.model';
 import { oidcReducer } from './reducers/oidc.reducer';
+import { OidcFacade } from './facades/oidc.facade';
+import { OidcService } from './services/oidc.service';
 
 @NgModule({
   imports: [CommonModule, StoreModule.forFeature('oidc', oidcReducer), EffectsModule.forFeature([OidcEffects])],
@@ -15,7 +17,7 @@ export class NgOidcClientModule {
   static forRoot(config?: Partial<Config>): ModuleWithProviders {
     return {
       ngModule: NgOidcClientModule,
-      providers: [{ provide: OIDC_CONFIG, useValue: config }]
+      providers: [{ provide: OIDC_CONFIG, useValue: config }, OidcFacade, OidcService]
     };
   }
 }

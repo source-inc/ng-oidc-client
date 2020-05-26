@@ -14,7 +14,7 @@ import { OidcService } from './services/oidc.service';
   providers: []
 })
 export class NgOidcClientModule {
-  static forRoot(config?: Partial<Config>): ModuleWithProviders {
+  static forRoot(config?: Partial<Config>): ModuleWithProviders<NgOidcClientModule> {
     return {
       ngModule: NgOidcClientModule,
       providers: [{ provide: OIDC_CONFIG, useValue: config }, OidcFacade, OidcService]

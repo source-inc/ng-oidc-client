@@ -69,7 +69,10 @@ Inject the `OidcFacade` in your Component
 ```typescript
 ...
 export class HomeComponent {
-  constructor(private oidcFacade: OidcFacade) {}
+  constructor(private oidcFacade: OidcFacade) {
+    // Call to get user from storage
+    this.oidcFacade.getOidcUser();
+  }
 
   loginPopup() {
     this.oidcFacade.signinPopup();

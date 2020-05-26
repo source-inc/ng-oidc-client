@@ -21,7 +21,7 @@ import { UserFacade } from './facades/user.facade';
   providers: [UserService, UserEffects, UserFacade]
 })
 export class UserModule {
-  static forRoot(config: Config): ModuleWithProviders {
+  static forRoot(config: Config): ModuleWithProviders<UserModule> {
     return {
       ngModule: UserModule,
       providers: [{ provide: USER_CONFIG, useValue: config }]

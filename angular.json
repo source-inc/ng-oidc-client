@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/ng-oidc-client-app",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -39,6 +40,12 @@
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -147,7 +154,8 @@
           "configurations": {
             "production": {
               "project": "projects/ng-oidc-client/ng-package.prod.json"
-            }
+            ,              "tsConfig": "projects/ng-oidc-client/tsconfig.lib.prod.json"
+}
           }
         },
         "test": {

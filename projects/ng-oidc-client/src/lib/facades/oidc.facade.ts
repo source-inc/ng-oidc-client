@@ -93,14 +93,26 @@ export class OidcFacade {
     return this.oidcService.getOidcClient();
   }
 
+  getSigninUrl(args?: RequestArugments) {
+    return this.oidcService.getSigninUrl(args);
+  }
+
+  getSignoutUrl(args?: RequestArugments) {
+    return this.oidcService.getSignoutUrl(args);
+  }
+
   /**
    * Convenient function to wait for loaded.
    */
   waitForAuthenticationLoaded() {
     return this.loading$.pipe(
-      filter(loading => loading === false),
+      filter((loading) => loading === false),
       take(1)
     );
+  }
+
+  signinSilent(args?: RequestArugments) {
+    this.store.dispatch(OidcActions.SigninSilent({ payload: args }));
   }
 
   signinPopup(args?: RequestArugments) {

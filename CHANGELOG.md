@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.4] - 2020-05-26
+- Updated to Angular 9
+- Restore facade functions
+
 ## [2.0.3] - 2020-02-06
 ## [2.0.2] - 2020-02-06
 ### Fixed

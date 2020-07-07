@@ -270,6 +270,7 @@ export class OidcInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this.oidcFacade.identity$.pipe(
+      take(1),
       switchMap(user => {
         if (user && !user.expired && user.access_token) {
           req = req.clone({
